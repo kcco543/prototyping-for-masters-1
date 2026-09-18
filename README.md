@@ -1,19 +1,27 @@
-# Prototyping with Cursor
+# Prototyping for Masters
 
-This is your personal prototyping workspace for the "Prototyping with Cursor" class. Here you can create and organize all your interaction design prototypes using Next.js.
+This is your personal prototyping workspace for the "Prototyping for Masters" class. Here you can create and organize all your interaction design prototypes using Next.js.
 
 ## Getting started
 
+This project uses Node.js 26.9.0. If you use a Node version manager, it can read
+the included `.nvmrc` or `.node-version` file to select the correct version.
+
 1. Click "Use this template"
-2. Install dependencies:
+2. Select the project's Node.js version. For example, with `nvm`:
+   ```bash
+   nvm install
+   nvm use
+   ```
+3. Install dependencies:
    ```bash
    npm install
    ```
-3. Run the development server:
+4. Run the development server:
    ```bash
    npm run dev
    ```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Creating a new prototype
 

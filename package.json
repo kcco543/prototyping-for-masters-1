@@ -1,7 +1,13 @@
 {
-  "name": "prototyping-with-cursor",
+  "name": "prototyping-for-masters",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=26.9.0 <27"
+  },
+  "overrides": {
+    "postcss": "8.5.28"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +16,7 @@
   "dependencies": {
     "@types/canvas-confetti": "^1.9.0",
     "canvas-confetti": "^1.9.3",
-    "next": "15.1.11",
+    "next": "^15.5.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
