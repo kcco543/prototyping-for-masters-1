@@ -1,49 +1,117 @@
+/*
+  Homepage styles, inspired by the "stay home" cat poster:
+  a soft sky-blue background, flat warm colours and hand-lettered type.
+*/
+
+.page {
+  /* The cats on wide screens are positioned relative to this box */
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  color: #2b2725;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(243, 192, 74, 0.22), transparent 28%),
+    radial-gradient(circle at 88% 30%, rgba(236, 142, 133, 0.2), transparent 30%),
+    radial-gradient(circle at 50% 95%, rgba(240, 137, 61, 0.14), transparent 35%),
+    #e6f0f1;
+}
+
 .container {
-  max-width: var(--max-width);
+  max-width: 760px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem 1.25rem 4rem;
 }
 
 .header {
-  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+  text-align: center;
 }
 
-.header h1 {
-  font-size: 2.5rem;
+.title {
+  font-family: var(--font-hand), cursive;
+  font-size: clamp(3rem, 9vw, 4.75rem);
   font-weight: 700;
+  line-height: 1;
+}
+
+.hint {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.65;
 }
 
 .grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem 1.75rem;
   margin-top: 2rem;
 }
 
+/* Each card wears a pair of cat ears in its accent colour */
 .card {
-  padding: 1.5rem;
-  border-radius: var(--border-radius);
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
+  position: relative;
   display: block;
+  padding: 1.5rem 1.5rem 1.4rem;
+  border-radius: 22px;
+  background: #fffaf2;
+  color: inherit;
+  text-decoration: none;
+  box-shadow:
+    0 2px 0 rgba(43, 39, 37, 0.06),
+    0 14px 30px -16px rgba(43, 39, 37, 0.35);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
 }
 
-.card:hover {
-  background: rgba(0, 0, 0, 0.04);
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  width: 30px;
+  height: 22px;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  transition: transform 0.25s ease;
 }
 
-.card h3 {
-  margin-bottom: 0.5rem;
+.card::before { left: 24px; transform-origin: bottom center; }
+.card::after { left: 62px; transform-origin: bottom center; }
+
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-4px) rotate(-0.6deg);
+  box-shadow:
+    0 2px 0 rgba(43, 39, 37, 0.06),
+    0 20px 36px -16px rgba(43, 39, 37, 0.4);
+}
+
+/* Ears perk up on hover */
+.card:hover::before { transform: rotate(-12deg); }
+.card:hover::after { transform: rotate(12deg); }
+
+.card:focus-visible {
+  outline: 2px dashed #2b2725;
+  outline-offset: 4px;
+}
+
+.cardTitle {
+  margin-bottom: 0.4rem;
   font-size: 1.25rem;
   font-weight: 600;
 }
 
-.card p {
-  font-size: 0.9rem;
-  opacity: 0.8;
+.cardText {
+  font-size: 0.95rem;
   line-height: 1.6;
+  opacity: 0.75;
+}
+
+/* Leave room at the bottom for the cats that roam the page on wide screens */
+@media (min-width: 1200px) {
+  .page {
+    min-height: max(100vh, 1150px);
+  }
 }

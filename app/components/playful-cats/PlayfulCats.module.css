@@ -1,0 +1,412 @@
+/*
+  Playful cats: layout, idle motion, and click actions.
+
+  How to read this file:
+  - `.cat` is the clickable button around each cat drawing.
+  - `.spotXxx` classes size each cat and, on wide screens, place it on the page.
+  - `.acting` is added for a few seconds after a click; every
+    `.acting .something` rule below is one cat's click animation.
+*/
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Clickable cat wrapper ---------- */
+
+.cat {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cat:focus-visible {
+  outline: 2px dashed #2b2725;
+  outline-offset: 6px;
+  border-radius: 18px;
+}
+
+.catArt {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transition: transform 0.25s ease;
+}
+
+.cat:hover .catArt {
+  transform: translateY(-4px) rotate(-1.5deg);
+}
+
+/* Speech bubble that pops up while a cat is acting */
+.bubble {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  z-index: 3;
+  padding: 0.1rem 0.7rem 0.2rem;
+  border-radius: 999px;
+  background: #fffaf2;
+  color: #2b2725;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px -8px rgba(43, 39, 37, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px) scale(0.6);
+  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.acting .bubble {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+/* ---------- Idle life: tails sway and eyes blink on their own ---------- */
+
+.idleTail {
+  animation: idleSway 4.5s ease-in-out infinite;
+  animation-delay: calc(var(--blink-delay, 0s) * -1);
+}
+
+.eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: idleBlink 6s infinite;
+  animation-delay: var(--blink-delay, 0s);
+}
+
+.decor {
+  pointer-events: none;
+}
+
+.sway {
+  animation: idleSway 6s ease-in-out infinite;
+}
+
+@keyframes idleSway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes idleBlink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+/* ---------- 1. Black cat: looks around, swishes tail, blinks ---------- */
+
+.acting .blackHead { animation: curiousHead 1.8s ease-in-out; }
+.acting .blackTail { animation: bigSwish 1.8s ease-in-out; }
+.spotBlack.acting .eyes { animation: idleBlink 0.9s 2 0.2s; }
+
+@keyframes curiousHead {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-13deg); }
+  55% { transform: rotate(9deg); }
+  80% { transform: rotate(-4deg); }
+}
+
+@keyframes bigSwish {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(16deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(18deg); }
+  80% { transform: rotate(-6deg); }
+}
+
+/* ---------- 2. Calico: walks off, turns around, walks back ---------- */
+
+.walker.acting .catArt { animation: walkAbout 4s ease-in-out; }
+.acting .legA { animation: step 0.5s ease-in-out infinite; }
+.acting .legB { animation: step 0.5s ease-in-out -0.25s infinite; }
+.acting .bob { animation: bob 0.5s ease-in-out infinite; }
+.acting .calicoTail { animation: bigSwish 1.3s ease-in-out infinite; }
+
+@keyframes walkAbout {
+  0% { transform: translateX(0) scaleX(1); }
+  42% { transform: translateX(-130px) scaleX(1); }
+  50% { transform: translateX(-130px) scaleX(-1); }
+  92% { transform: translateX(0) scaleX(-1); }
+  100% { transform: translateX(0) scaleX(1); }
+}
+
+@keyframes step {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(15deg); }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* ---------- 3. Orange tabby: rolls over and rolls back ---------- */
+
+.acting .roller { animation: rollOver 1.7s ease-in-out; }
+
+/* Every step uses the same "translate + rotate" list so the browser
+   animates the full 360° turn instead of taking a shortcut. */
+@keyframes rollOver {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(0, -8px) rotate(-8deg); }
+  48% { transform: translate(44px, -6px) rotate(360deg); }
+  58% { transform: translate(44px, 0) rotate(360deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* ---------- 4. Spotted cream cat: long stretch ---------- */
+
+.acting .stretchBody { animation: stretchBody 2s ease-in-out; }
+.acting .stretchHead { animation: stretchHead 2s ease-in-out; }
+.acting .stretchTail { animation: bigSwish 2s ease-in-out; }
+
+@keyframes stretchBody {
+  0%, 100% { transform: scale(1, 1); }
+  35%, 70% { transform: scale(1.13, 0.94); }
+}
+
+@keyframes stretchHead {
+  0%, 100% { transform: translate(0, 0); }
+  35%, 70% { transform: translate(-23px, 4px); }
+}
+
+/* ---------- 5. Grey cat: bats the yarn ---------- */
+
+.yarn { animation: idleSway 5s ease-in-out infinite; }
+.acting .yarn { animation: yarnSwing 1.8s ease-out; }
+.acting .paw { animation: bat 1.8s ease-in-out; }
+.acting .yarnHead { animation: watchYarn 1.8s ease-in-out; }
+
+@keyframes bat {
+  0%, 100% { transform: rotate(0deg); }
+  14% { transform: rotate(18deg); }
+  28% { transform: rotate(-8deg); }
+  44% { transform: rotate(20deg); }
+  60% { transform: rotate(-6deg); }
+}
+
+@keyframes yarnSwing {
+  0%, 12% { transform: rotate(0deg); }
+  28% { transform: rotate(-34deg); }
+  46% { transform: rotate(22deg); }
+  62% { transform: rotate(-14deg); }
+  80% { transform: rotate(7deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes watchYarn {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-7deg); }
+  50% { transform: rotate(6deg); }
+  70% { transform: rotate(-3deg); }
+}
+
+/* ---------- 6. Brown loaf: dozes off (eyes close, zzz, breathing) ---------- */
+
+.eyesClosed { opacity: 0; }
+.acting .eyesOpen { animation: sleepOut 3.2s ease-in-out; }
+.acting .eyesClosed { animation: sleepIn 3.2s ease-in-out; }
+.acting .breathe { animation: breathe 3.2s ease-in-out; }
+.acting .loafHead { animation: nod 3.2s ease-in-out; }
+
+.zzz { opacity: 0; }
+.acting .zzz { opacity: 1; }
+.z { opacity: 0; font-family: var(--font-hand), cursive; }
+.acting .z { animation: zFloat 3.2s ease-out; }
+.acting .z:nth-child(2) { animation-delay: 0.35s; }
+.acting .z:nth-child(3) { animation-delay: 0.7s; }
+
+@keyframes sleepOut {
+  0%, 100% { opacity: 1; }
+  12%, 88% { opacity: 0; }
+}
+
+@keyframes sleepIn {
+  0%, 100% { opacity: 0; }
+  12%, 88% { opacity: 1; }
+}
+
+@keyframes breathe {
+  0%, 50%, 100% { transform: scale(1, 1); }
+  25%, 75% { transform: scale(1.01, 1.05); }
+}
+
+@keyframes nod {
+  0%, 100% { transform: rotate(0deg); }
+  15%, 85% { transform: rotate(7deg); }
+}
+
+@keyframes zFloat {
+  0% { opacity: 0; transform: translate(0, 0); }
+  20% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(10px, -18px); }
+}
+
+/* ---------- 7. White & black cat: wiggles on its back ---------- */
+
+.acting .rolly { animation: wiggle 1.8s ease-in-out; }
+.acting .kickA { animation: paddleA 0.3s ease-in-out 6 alternate; }
+.acting .kickB { animation: paddleB 0.3s ease-in-out 6 alternate; }
+.acting .backTail { animation: bigSwish 0.9s ease-in-out 2; }
+.acting .backHead { animation: curiousHead 1.8s ease-in-out; }
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-9deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(4deg); }
+}
+
+@keyframes paddleA {
+  from { transform: rotate(-14deg); }
+  to { transform: rotate(10deg); }
+}
+
+@keyframes paddleB {
+  from { transform: rotate(12deg); }
+  to { transform: rotate(-12deg); }
+}
+
+/* ---------- 8. Grey cat on books: hops (squash & stretch) ---------- */
+
+.acting .hopper { animation: hop 1.3s ease-in-out; }
+.acting .books { animation: booksWobble 1.3s ease-out; }
+.acting .bookHead { animation: curiousHead 1.3s ease-in-out; }
+.acting .bookTail { animation: bigSwish 1.3s ease-in-out; }
+
+@keyframes hop {
+  0% { transform: translateY(0) scale(1, 1); }
+  18% { transform: translateY(0) scale(1.07, 0.88); }
+  45% { transform: translateY(-48px) scale(0.95, 1.08); }
+  70% { transform: translateY(0) scale(1.08, 0.9); }
+  85% { transform: translateY(0) scale(0.98, 1.03); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
+@keyframes booksWobble {
+  0%, 66%, 100% { transform: rotate(0deg); }
+  74% { transform: rotate(-3deg); }
+  84% { transform: rotate(2deg); }
+  92% { transform: rotate(-1deg); }
+}
+
+/* ---------- 9. Pink spotted cat: puffs up, shivers, bounces ---------- */
+
+.acting .puffer { animation: puff 1.5s ease-in-out; }
+.acting .archTail { animation: tailUp 1.5s ease-in-out; }
+.acting .archHead { animation: curiousHead 1.5s ease-in-out; }
+
+@keyframes puff {
+  0% { transform: translate(0, 0) scale(1, 1); }
+  15% { transform: translate(0, 0) scale(1.06, 1.1); }
+  22% { transform: translate(3px, 0) scale(1.06, 1.1); }
+  29% { transform: translate(-3px, 0) scale(1.06, 1.1); }
+  36% { transform: translate(3px, 0) scale(1.06, 1.1); }
+  43% { transform: translate(0, 0) scale(1.06, 1.1); }
+  62% { transform: translate(-14px, -28px) scale(1, 1); }
+  80% { transform: translate(0, 0) scale(1.04, 0.94); }
+  100% { transform: translate(0, 0) scale(1, 1); }
+}
+
+@keyframes tailUp {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  15%, 45% { transform: rotate(-14deg) scale(1.12); }
+  25% { transform: rotate(-8deg) scale(1.12); }
+  35% { transform: rotate(-18deg) scale(1.12); }
+}
+
+/* ---------- Mouse: scurries away and comes back ---------- */
+
+.mouseTail { animation: idleSway 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+.mouse.acting .catArt { animation: scurry 2.2s ease-in-out; }
+
+@keyframes scurry {
+  0% { transform: translateX(0) scaleX(1); }
+  38% { transform: translateX(-170px) scaleX(1); }
+  50% { transform: translateX(-170px) scaleX(-1); }
+  92% { transform: translateX(0) scaleX(-1); }
+  100% { transform: translateX(0) scaleX(1); }
+}
+
+/* ---------- Layout: small screens (cats sit in rows) ---------- */
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2.25rem 1.25rem;
+  margin: 2.5rem 0 1.5rem;
+}
+
+.spotBlack { width: 84px; }
+.spotCalico { width: 140px; }
+.spotTabby { width: 140px; }
+.spotStretch { width: 140px; }
+.spotMouse { width: 46px; }
+.spotYarn { width: 104px; }
+.spotLoaf { width: 150px; }
+.spotBooks { width: 92px; }
+.spotBack { width: 108px; }
+.spotArch { width: 106px; }
+.spotPlant,
+.spotLeaf { display: none; }
+
+/* ---------- Layout: wide screens (cats roam around the page edges) ---------- */
+
+@media (min-width: 1200px) {
+  /* The group wrappers disappear so each cat is positioned by the page */
+  .cluster { display: contents; }
+
+  .cat,
+  .decor {
+    position: absolute;
+    z-index: 2;
+  }
+
+  /* Left side, top to bottom */
+  .spotBlack { top: 3%; left: 4%; width: clamp(110px, 10vw, 150px); }
+  .spotMouse { top: 19%; left: 11%; width: 58px; }
+  .spotStretch { top: 26%; left: 2%; width: clamp(170px, 14vw, 230px); }
+  .spotLoaf { top: 50%; left: 2%; width: clamp(180px, 15vw, 240px); }
+  .spotLeaf { display: block; top: 71%; left: 9%; width: 64px; }
+  .spotBack { bottom: 3%; left: 4%; width: clamp(130px, 12vw, 180px); }
+
+  /* Right side, top to bottom */
+  .spotCalico { top: 3%; right: 3%; width: clamp(170px, 14vw, 230px); }
+  .spotTabby { top: 22%; right: 2%; width: clamp(170px, 14vw, 230px); }
+  .spotYarn { top: 40%; right: 4%; width: clamp(130px, 11vw, 170px); }
+  .spotPlant { display: block; top: 64%; right: 7%; width: 76px; }
+  .spotArch { bottom: 3%; right: 4%; width: clamp(130px, 12vw, 180px); }
+
+  /* Bottom centre, below the cards */
+  .spotBooks { bottom: 3%; left: calc(50% - 70px); width: 140px; }
+}
+
+/* ---------- Respect "reduce motion" system settings ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cat *,
+  .decor *,
+  .catArt {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* The speech bubble still appears, so a click is still acknowledged. */
+  .acting .bubble {
+    transition: opacity 0.2s ease !important;
+  }
+}

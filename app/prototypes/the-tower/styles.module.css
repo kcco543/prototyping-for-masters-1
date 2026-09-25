@@ -1,0 +1,353 @@
+/*
+  The Tower — styles.
+  Colours match the homepage (pale sky-blue page, cream cards, hand-lettered
+  titles) and the mint shelf illustration used for the game scene.
+*/
+
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem 1.25rem;
+  color: #2b2725;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(243, 192, 74, 0.22), transparent 28%),
+    radial-gradient(circle at 88% 30%, rgba(236, 142, 133, 0.2), transparent 30%),
+    #e6f0f1;
+}
+
+/* ---------- Top bar ---------- */
+
+.topBar {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backLink {
+  justify-self: start;
+  font-size: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.75;
+}
+
+/* On narrow screens the back link just says "Home" */
+.backShort {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .backFull { display: none; }
+  .backShort { display: inline; }
+}
+
+.backLink:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.title {
+  font-family: var(--font-hand), cursive;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.muteButton {
+  justify-self: end;
+  padding: 0.35rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: #fffaf2;
+  color: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 6px 14px -10px rgba(43, 39, 37, 0.5);
+}
+
+.muteButton:focus-visible,
+.backLink:focus-visible,
+.playButton:focus-visible {
+  outline: 2px dashed #2b2725;
+  outline-offset: 3px;
+}
+
+/* ---------- Score ---------- */
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.4rem 0 0.6rem;
+  font-size: 0.9rem;
+}
+
+.scoreLabel {
+  font-variant-numeric: tabular-nums;
+}
+
+.scorePips {
+  display: flex;
+  gap: 5px;
+}
+
+/* Each pip is a tiny cup shape */
+.pip {
+  width: 14px;
+  height: 11px;
+  border: 2px solid #2b2725;
+  border-top-width: 0;
+  border-radius: 0 0 7px 7px;
+  background: transparent;
+  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pipOn {
+  background: #e8453c;
+  transform: scale(1.2);
+}
+
+/* ---------- Stage ---------- */
+
+.stageWrap {
+  position: relative;
+  /* Keep the 600 × 860 scene fully visible: as wide as possible,
+     but never taller than the space left on screen */
+  width: min(100%, calc((100dvh - 130px) * 600 / 860));
+  min-width: 280px;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -22px rgba(43, 39, 37, 0.45);
+}
+
+.stage {
+  width: 100%;
+  height: auto;
+  cursor: none; /* the drawn hand replaces the mouse pointer */
+  touch-action: none; /* stop the page scrolling while dragging a finger */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hand {
+  pointer-events: none;
+}
+
+.handCatch {
+  animation: handCatch 0.3s ease-out;
+}
+
+@keyframes handCatch {
+  0% { transform: translateY(0) scale(1, 1); }
+  35% { transform: translateY(6px) scale(1.08, 0.9); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
+/* ---------- Cat animations ---------- */
+
+.cat {
+  pointer-events: none;
+}
+
+.catTail {
+  animation: tailSway 2.4s ease-in-out infinite;
+}
+
+.pose_walk .legA {
+  animation: step 0.42s ease-in-out infinite;
+}
+
+.pose_walk .legB {
+  animation: step 0.42s ease-in-out -0.21s infinite;
+}
+
+.pose_walk .catHead {
+  animation: bob 0.42s ease-in-out infinite;
+}
+
+.pose_jump .legA {
+  transform: rotate(-35deg);
+}
+
+.pose_jump .legB {
+  transform: rotate(35deg);
+}
+
+.pose_stand .catHead {
+  animation: sniff 1.2s ease-in-out infinite;
+}
+
+.catEyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 4.5s infinite;
+}
+
+.happyBounce {
+  animation: happyBounce 0.55s ease-in-out infinite;
+}
+
+.heart {
+  opacity: 0;
+  animation: heartFloat 1.4s ease-out infinite;
+}
+
+@keyframes tailSway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes step {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(18deg); }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes sniff {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(7deg); }
+}
+
+@keyframes blink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+@keyframes happyBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-26px) rotate(-6deg); }
+  60% { transform: translateY(-26px) rotate(6deg); }
+}
+
+@keyframes heartFloat {
+  0% { opacity: 0; transform: translateY(0) scale(0.6); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+}
+
+/* ---------- Overlays (intro, crash, win) ---------- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(230, 240, 241, 0.35);
+  cursor: auto;
+}
+
+/* The crash message shouldn't block the pointer (the hand keeps moving) */
+.overlayPassThrough {
+  background: transparent;
+  pointer-events: none;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  max-width: 340px;
+  padding: 1.5rem 1.5rem 1.4rem;
+  border-radius: 22px;
+  background: #fffaf2;
+  text-align: center;
+  box-shadow: 0 20px 40px -18px rgba(43, 39, 37, 0.5);
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cardTitle {
+  margin-bottom: 0.5rem;
+  font-family: var(--font-hand), cursive;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.cardText {
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.playButton {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: #e8453c;
+  color: #fffaf2;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #b8322b;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.playButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #b8322b;
+}
+
+.playButton:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #b8322b;
+}
+
+.winCard {
+  border: 3px solid #f6e45a;
+}
+
+.toast {
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  background: #2b2725;
+  color: #fffaf2;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.8rem;
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Falling paper confetti for the win screen */
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confettiBit {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confettiFall 2.6s linear infinite;
+}
+
+@keyframes confettiFall {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(110vh) rotate(540deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confettiBit,
+  .heart,
+  .happyBounce {
+    animation: none;
+  }
+}
