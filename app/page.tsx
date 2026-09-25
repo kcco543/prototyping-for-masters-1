@@ -5,7 +5,7 @@ import { caveat, instrumentSans } from './fonts';
 import { BottomCats, CatDefs, TopCats } from './components/playful-cats/PlayfulCats';
 
 // Accent colours taken from the cats' fur. Each card gets one for its "ears".
-const accents = ['#f0893d', '#ec8e85', '#f3c04a', '#aaa99d', '#b8633a', '#6d6d71'];
+const accents = ['#f0893d', '#ec8e85', '#aaa99d', '#b8633a', '#6d6d71'];
 
 export default function Home() {
   // Add your prototypes to this array
@@ -19,11 +19,6 @@ export default function Home() {
       title: 'Confetti button',
       description: 'An interactive button that creates a colorful confetti explosion',
       path: '/prototypes/confetti-button'
-    },
-    {
-      title: 'A Reading for Yourself',
-      description: 'Consult the celestial deck. Draw a card to unveil guidance, clarity, and creative intuition.',
-      path: '/prototypes/a-reading-for-yourself'
     },
     {
       title: 'The Tower',
