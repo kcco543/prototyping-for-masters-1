@@ -1,4 +1,4 @@
-import { Caveat, Instrument_Sans } from 'next/font/google';
+import { Caveat, Cinzel, Instrument_Sans } from 'next/font/google';
 
 export const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
@@ -12,4 +12,10 @@ export const caveat = Caveat({
   display: 'swap',
   weight: ['500', '700'],
   variable: '--font-hand',
+});
+
+// Classical serif used by the "A Reading for Yourself" prototype.
+export const cinzel = Cinzel({
+  subsets: ['latin'],
+  display: 'swap',
 });

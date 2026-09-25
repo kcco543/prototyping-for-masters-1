@@ -1,0 +1,607 @@
+.container {
+  --tarot-obsidian: #09070f;
+  --tarot-card-front: #141022;
+  --tarot-card-back: #181228;
+  --gold-foil: #d4af37;
+  --gold-light: #fbeea4;
+  --gold-dark: #8d701e;
+  --gold-border: rgba(212, 175, 55, 0.35);
+  --gold-border-bright: rgba(212, 175, 55, 0.85);
+  --gold-glow: rgba(212, 175, 55, 0.25);
+  --text-celestial: #f8f5ee;
+  --text-muted: #c7b897;
+  --text-arcane: #8f85a3;
+
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--tarot-obsidian);
+  color: var(--text-celestial);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.celestialBackdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(ellipse 65% 45% at 50% 10%, rgba(139, 92, 246, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 55% at 50% 90%, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 15% 20%, rgba(251, 238, 164, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 80% 25%, rgba(248, 245, 238, 0.4) 50%, transparent 100%),
+    radial-gradient(2px 2px at 70% 70%, rgba(212, 175, 55, 0.6) 50%, transparent 100%),
+    radial-gradient(1px 1px at 30% 80%, rgba(251, 238, 164, 0.4) 50%, transparent 100%);
+  background-repeat: repeat;
+  background-size: 400px 400px;
+  z-index: 0;
+}
+
+/* Slowly rotating astrological chart */
+.astroChartWrap {
+  position: fixed;
+  /* Centre it over the viewport */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90vw, 90vh);
+  height: min(90vw, 90vh);
+  pointer-events: none;
+  z-index: 0;
+  /* Fade it gently so it sits behind content */
+  opacity: 0.65;
+  /* Very gentle vignette mask so edges dissolve */
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 50%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 50%, transparent 100%);
+}
+
+.astroChart {
+  width: 100%;
+  height: 100%;
+  animation: astroSpin 120s linear infinite;
+}
+
+@keyframes astroSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+
+.navBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  z-index: 2;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(24, 18, 40, 0.8);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-foil);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+}
+
+.backButton:hover {
+  border-color: var(--gold-border-bright);
+  background: rgba(36, 28, 56, 0.9);
+  transform: translateX(-3px);
+  color: var(--gold-light);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.deckTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-arcane);
+}
+
+.tagDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-foil);
+  box-shadow: 0 0 8px var(--gold-foil);
+}
+
+.main {
+  position: relative;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.subheading {
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-foil);
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 15%, var(--gold-light) 50%, var(--gold-foil) 85%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.85rem;
+}
+
+.description {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Sequential Revelation Tracker Bar */
+.trackerBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.25rem;
+  flex-wrap: wrap;
+}
+
+.trackerStep {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  background: rgba(22, 17, 34, 0.75);
+  border: 1px solid var(--gold-border);
+  color: var(--text-arcane);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
+}
+
+.trackerStepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-foil);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.trackerStepNext {
+  border-color: var(--gold-border-bright);
+  color: var(--gold-light);
+  background: rgba(36, 28, 56, 0.9);
+  box-shadow: 0 0 16px var(--gold-glow);
+  cursor: pointer;
+  transform: scale(1.03);
+}
+
+.trackerStepRevealed {
+  border-color: rgba(212, 175, 55, 0.5);
+  color: var(--gold-foil);
+  background: rgba(28, 22, 42, 0.85);
+}
+
+.revealedCheck {
+  color: var(--gold-light);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Three Cards Stage */
+.cardStage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.75rem;
+  width: 100%;
+  perspective: 1200px;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.cardColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 290px;
+}
+
+/* Slot Header above each of the 3 cards */
+.slotHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.slotTitle {
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-foil);
+  margin-bottom: 0.2rem;
+}
+
+.slotRole {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-arcane);
+}
+
+/* 3D Card Wrapper */
+.tarotCardWrapper {
+  width: 100%;
+  height: 470px;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.4s ease;
+}
+
+.tarotCardWrapper:hover {
+  transform: translateY(-6px);
+}
+
+.isNextInSequence {
+  animation: cardAttention 3s ease-in-out infinite;
+}
+
+@keyframes cardAttention {
+  0%, 100% {
+    transform: translateY(0);
+    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.25));
+  }
+  50% {
+    transform: translateY(-6px);
+    filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.5));
+  }
+}
+
+.tarotCardWrapper:focus-visible {
+  outline: 2px solid var(--gold-light);
+  border-radius: 18px;
+}
+
+.tarotCardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+.isFlipped .tarotCardInner {
+  transform: rotateY(180deg);
+}
+
+.isShuffling .tarotCardInner {
+  transform: rotateY(90deg) scale(0.9);
+  transition: transform 0.25s ease-in;
+}
+
+/* Common Card Face */
+.cardFaceBack,
+.cardFaceFront {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 18px;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 55, 0.15);
+  border: 1.5px solid var(--gold-border);
+  overflow: hidden;
+}
+
+/* Back Face */
+.cardFaceBack {
+  background: var(--tarot-card-back);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.backBorder {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backPattern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  color: var(--gold-foil);
+}
+
+.backCenterStar {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+.backMoonPhase {
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  opacity: 0.7;
+}
+
+.drawPromptOverlay {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.95rem;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+.promptPulse {
+  color: var(--gold-light);
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid var(--gold-border-bright);
+  box-shadow: 0 0 14px var(--gold-glow);
+  animation: promptPulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes promptPulseGlow {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px var(--gold-glow);
+  }
+}
+
+.promptLocked {
+  color: var(--text-arcane);
+  background: rgba(10, 7, 18, 0.7);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+/* Front Face */
+.cardFaceFront {
+  background: var(--tarot-card-front);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.frontBorder {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.cornerTL, .cornerTR, .cornerBL, .cornerBR {
+  position: absolute;
+  color: var(--gold-foil);
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+.cornerTL { top: 13px; left: 13px; }
+.cornerTR { top: 13px; right: 13px; }
+.cornerBL { bottom: 13px; left: 13px; }
+.cornerBR { bottom: 13px; right: 13px; }
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.15rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0.35rem;
+}
+
+.arcanaNumeral {
+  font-size: 0.82rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-foil);
+  font-weight: 600;
+}
+
+.uprightTag {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-arcane);
+}
+
+.glyphPortal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 75px;
+  border-radius: 999px 999px 10px 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.15) 0%, rgba(15, 11, 24, 0.8) 80%);
+  margin-bottom: 0.85rem;
+}
+
+.portalGlyph {
+  font-size: 2.1rem;
+  color: var(--gold-light);
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+.cardBody {
+  flex: 1;
+}
+
+.cardTheme {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-foil);
+  margin-bottom: 0.25rem;
+  opacity: 0.9;
+}
+
+.cardName {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-celestial);
+  margin-bottom: 0.45rem;
+  line-height: 1.2;
+}
+
+.interpretation {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  font-weight: 300;
+  margin-bottom: 0.65rem;
+}
+
+.cardPromptBox {
+  padding: 0.65rem;
+  border-radius: 8px;
+  background: rgba(10, 7, 18, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  text-align: left;
+}
+
+.promptLabel {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-foil);
+  margin-bottom: 0.15rem;
+}
+
+.promptText {
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--text-celestial);
+  font-style: italic;
+}
+
+/* Control Buttons */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.drawButton {
+  padding: 0.95rem 2.4rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fbeea4 0%, #d4af37 60%, #aa820a 100%);
+  color: #120e20;
+  font-weight: 600;
+  font-size: 0.88rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -4px rgba(212, 175, 55, 0.4), 0 0 20px rgba(212, 175, 55, 0.2);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawButton:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px -4px rgba(212, 175, 55, 0.6), 0 0 30px rgba(212, 175, 55, 0.35);
+}
+
+.drawButton:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.drawButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.resetSpreadButton {
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  background: rgba(24, 18, 40, 0.85);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-foil);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+}
+
+.resetSpreadButton:hover {
+  border-color: var(--gold-border-bright);
+  background: rgba(36, 28, 56, 0.95);
+  color: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px var(--gold-glow);
+}

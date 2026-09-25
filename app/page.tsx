@@ -21,6 +21,11 @@ export default function Home() {
       path: '/prototypes/confetti-button'
     },
     {
+      title: 'A Reading for Yourself',
+      description: 'Consult the celestial deck. Draw a card to unveil guidance, clarity, and creative intuition.',
+      path: '/prototypes/a-reading-for-yourself'
+    },
+    {
       title: 'The Tower',
       description: 'A curious cat knocks cups off the shelves. Catch every one before it hits the floor!',
       path: '/prototypes/the-tower'
