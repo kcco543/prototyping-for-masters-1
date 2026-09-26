@@ -18,6 +18,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import styles from "./PlayfulCats.module.css";
+import { TREE_DRAG_END, TREE_DRAG_START } from "../cat-tree/CatTree";
 
 /* ---------- Palette sampled from the illustration ---------- */
 const INK = "#2b2725";
@@ -188,10 +189,14 @@ type CatProps = {
   viewBox: string;
   /** Offset for the idle blink so the cats don't all blink together. */
   blinkDelay?: number;
+  /** Which way the drawing faces, so a chasing cat can turn to face where it runs. */
+  faces?: "left" | "right" | "front";
+  /** Set to false for anything that shouldn't chase the laser (the mouse!). */
+  chaser?: boolean;
   children: ReactNode;
 };
 
-function Cat({ name, action, say, duration, spot, viewBox, blinkDelay = 0, children }: CatProps) {
+function Cat({ name, action, say, duration, spot, viewBox, blinkDelay = 0, faces = "front", chaser = true, children }: CatProps) {
   const [acting, setActing] = useState(false);
   const timer = useRef<number | undefined>(undefined);
 
@@ -211,13 +216,24 @@ function Cat({ name, action, say, duration, spot, viewBox, blinkDelay = 0, child
       onClick={play}
       aria-label={`${name}. Click to make it ${action}.`}
       style={{ "--blink-delay": `${blinkDelay}s` } as CSSProperties}
+      data-chase-cat={chaser ? "" : undefined}
+      data-faces={faces}
     >
       <span className={styles.bubble} aria-hidden="true">
         {say}
       </span>
-      <svg viewBox={viewBox} className={styles.catArt} aria-hidden="true">
-        {children}
-      </svg>
+      {/* "!" that pops up when the cat notices the laser */}
+      <span className={styles.alert} aria-hidden="true">
+        !
+      </span>
+      {/* facing: flipped left/right while chasing; run: the running bounce */}
+      <span className={styles.facing} data-facing="">
+        <span className={styles.run}>
+          <svg viewBox={viewBox} className={styles.catArt} aria-hidden="true">
+            {children}
+          </svg>
+        </span>
+      </span>
     </button>
   );
 }
@@ -256,7 +272,7 @@ function CalicoCat() {
     </g>
   );
   return (
-    <Cat name="Calico cat" action="get up and go for a little walk" say="*pads off*" duration={4000} spot={`${styles.spotCalico} ${styles.walker}`} viewBox="0 0 280 210" blinkDelay={3}>
+    <Cat name="Calico cat" action="get up and go for a little walk" say="*pads off*" duration={4000} spot={`${styles.spotCalico} ${styles.walker}`} viewBox="0 0 280 210" blinkDelay={3} faces="left">
       <g className={`${styles.idleTail} ${styles.calicoTail}`} style={pivot(226, 92)}>
         <path d="M226 92 C250 88 262 70 262 50 C262 38 268 31 276 30" stroke={PINK} strokeWidth={10} fill="none" strokeLinecap="round" />
         <path d="M265 38 C267 33 271 30 276 30" stroke={BLACK} strokeWidth={10} fill="none" strokeLinecap="round" />
@@ -296,7 +312,7 @@ function CalicoCat() {
 /** Orange tabby lying down with its paws stretched forward. */
 function TabbyCat() {
   return (
-    <Cat name="Orange tabby cat" action="roll over" say="wheee!" duration={1700} spot={styles.spotTabby} viewBox="0 0 280 175" blinkDelay={4.5}>
+    <Cat name="Orange tabby cat" action="roll over" say="wheee!" duration={1700} spot={styles.spotTabby} viewBox="0 0 280 175" blinkDelay={4.5} faces="left">
       <g className={styles.roller} style={pivot(150, 120)}>
         <g className={`${styles.idleTail} ${styles.tabbyTail}`} style={pivot(236, 146)}>
           <path d="M236 146 C262 150 270 164 250 166 C226 168 214 160 198 164" stroke={ORANGE} strokeWidth={10} fill="none" strokeLinecap="round" />
@@ -332,7 +348,7 @@ function TabbyCat() {
 function StretchCat() {
   const body = "M70 150 C90 128 130 100 170 70 C196 50 236 54 244 90 C252 126 238 160 214 170 C196 176 180 168 170 158 L110 172 C90 176 70 168 70 150Z";
   return (
-    <Cat name="Spotted cream cat" action="do a big stretch" say="stretchhh…" duration={2000} spot={styles.spotStretch} viewBox="0 0 280 200" blinkDelay={2}>
+    <Cat name="Spotted cream cat" action="do a big stretch" say="stretchhh…" duration={2000} spot={styles.spotStretch} viewBox="0 0 280 200" blinkDelay={2} faces="left">
       <g className={`${styles.idleTail} ${styles.stretchTail}`} style={pivot(214, 72)}>
         <path d="M214 72 C216 40 200 20 176 18 C160 18 150 26 148 32" stroke={YELLOW} strokeWidth={11} fill="none" strokeLinecap="round" />
       </g>
@@ -431,7 +447,7 @@ function YarnCat() {
 /** Rust-brown cat lying like a loaf, ready for a nap. */
 function LoafCat() {
   return (
-    <Cat name="Brown cat lying down" action="take a quick nap" say="zzz…" duration={3200} spot={styles.spotLoaf} viewBox="0 0 290 160" blinkDelay={0.5}>
+    <Cat name="Brown cat lying down" action="take a quick nap" say="zzz…" duration={3200} spot={styles.spotLoaf} viewBox="0 0 290 160" blinkDelay={0.5} faces="right">
       <g className={styles.breathe} style={pivot(140, 152)}>
         <g filter={GRAIN}>
           <path d="M30 150 C14 150 12 118 34 106 C70 88 140 84 190 86 C222 88 240 104 244 130 L250 150Z" fill={RUST} />
@@ -549,7 +565,7 @@ function ArchCat() {
     </g>
   );
   return (
-    <Cat name="Pink spotted cat" action="puff up and bounce" say="hsss… jk!" duration={1500} spot={styles.spotArch} viewBox="0 0 240 236" blinkDelay={4}>
+    <Cat name="Pink spotted cat" action="puff up and bounce" say="hsss… jk!" duration={1500} spot={styles.spotArch} viewBox="0 0 240 236" blinkDelay={4} faces="left">
       <g className={styles.puffer} style={pivot(130, 224)}>
         <g className={`${styles.idleTail} ${styles.archTail}`} style={pivot(196, 120)}>
           <path d="M196 120 C214 96 216 60 204 40 C196 26 200 12 214 10" stroke={PINK} strokeWidth={10} fill="none" strokeLinecap="round" />
@@ -590,7 +606,7 @@ function ArchCat() {
 /** The little grey mouse from the poster. It scurries away when clicked. */
 function Mouse() {
   return (
-    <Cat name="Tiny grey mouse" action="scurry away" say="eek!" duration={2200} spot={`${styles.spotMouse} ${styles.mouse}`} viewBox="0 0 90 44">
+    <Cat name="Tiny grey mouse" action="scurry away" say="eek!" duration={2200} spot={`${styles.spotMouse} ${styles.mouse}`} viewBox="0 0 90 44" faces="left" chaser={false}>
       <path className={styles.mouseTail} d="M70 30 C80 26 82 14 90 10" stroke={SAGE} strokeWidth={1.6} fill="none" strokeLinecap="round" />
       <path d="M8 32 C12 18 30 12 50 16 C66 18 74 26 70 34Z" fill={SAGE} filter={GRAIN} />
       <circle cx={30} cy={16} r={6} fill={SAGE} />
@@ -691,6 +707,256 @@ export function BottomCats() {
       <BackCat />
       <ArchCat />
       <Leaf className={styles.spotLeaf} />
+    </div>
+  );
+}
+
+/* ---------- Laser pointer: the cursor becomes a red dot the cats chase ---------- */
+
+type Chaser = {
+  el: HTMLElement;
+  facing: HTMLElement | null;
+  faces: string;
+  /** home = resting in its spot, notice = just spotted the dot, chase, return = walking back */
+  mode: "home" | "notice" | "chase" | "return";
+  off: { x: number; y: number }; // how far the cat has moved from its spot (px)
+  vel: { x: number; y: number };
+  until: number; // when the current mode ends
+  restUntil: number; // won't notice the laser again before this time
+  topSpeed: number; // each cat runs at its own speed
+  flip: number;
+  nextPounce: number;
+};
+
+const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+/**
+ * Replaces the mouse cursor with a small glowing laser dot, and lets the
+ * cats chase it.
+ *
+ * How it works:
+ * - The dot eases towards the real mouse position every frame.
+ * - Every so often (at random, every few seconds), a resting cat "notices"
+ *   the dot: a "!" pops up, it crouches, then it runs after the dot. Only
+ *   one cat plays with the laser at a time.
+ * - Chasing uses simple steering: each frame the cat accelerates a little
+ *   towards the dot (with a top speed), so it curves and lags behind
+ *   naturally instead of teleporting. It turns to face where it runs.
+ * - After a while, or when the dot stops moving, the cat loses interest and
+ *   walks back to its own spot.
+ * - While you're dragging the cat tree to spin it, the cats ignore the dot
+ *   (anyone already chasing it heads home) and pick up again after you let go.
+ *
+ * Only the cat's position is changed; the drawings themselves stay the
+ * same. It's switched off on touch screens (no mouse) and for people who
+ * prefer reduced motion (the dot still appears; the cats just stay put).
+ */
+export function LaserPointer() {
+  const dotRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const dot = dotRef.current;
+    const host = dot?.parentElement;
+    if (!dot || !host) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    host.classList.add(styles.laserOn); // hides the normal cursor on the page
+
+    const mouse = { x: -100, y: -100, seen: false, lastMove: 0 };
+    const pos = { x: -100, y: -100 };
+    // How often a cat gets a chance to notice the dot (kept fairly rare so it
+    // doesn't get in the way of the page or the cats' click actions)
+    const NOTICE_GAP: [number, number] = [3500, 8000];
+    let nextNotice = performance.now() + rand(2000, 4000);
+
+    const cats: Chaser[] = Array.from(host.querySelectorAll<HTMLElement>("[data-chase-cat]")).map((el) => ({
+      el,
+      facing: el.querySelector<HTMLElement>("[data-facing]"),
+      faces: el.dataset.faces ?? "front",
+      mode: "home",
+      off: { x: 0, y: 0 },
+      vel: { x: 0, y: 0 },
+      until: 0,
+      restUntil: performance.now() + rand(0, 3000),
+      topSpeed: rand(280, 520),
+      flip: 1,
+      nextPounce: 0,
+    }));
+
+    const setMode = (c: Chaser, mode: Chaser["mode"]) => {
+      c.mode = mode;
+      c.el.classList.toggle(styles.noticing, mode === "notice");
+      c.el.classList.toggle(styles.chasing, mode === "chase");
+      c.el.classList.toggle(styles.returning, mode === "return");
+    };
+
+    const onMove = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.lastMove = performance.now();
+      if (!mouse.seen) {
+        mouse.seen = true;
+        pos.x = mouse.x;
+        pos.y = mouse.y;
+      }
+      dot.classList.add(styles.laserVisible);
+      // grow the dot a little over links and buttons, so you can tell they're clickable
+      const target = e.target as Element | null;
+      dot.classList.toggle(styles.laserHover, !!target?.closest("a, button"));
+    };
+    const onLeave = () => {
+      dot.classList.remove(styles.laserVisible);
+      mouse.lastMove = 0; // cats lose interest when the dot disappears
+    };
+    // While the cat tree is being dragged, the cats ignore the laser
+    let treeDragging = false;
+    const onTreeDragStart = () => (treeDragging = true);
+    const onTreeDragEnd = () => {
+      treeDragging = false;
+      nextNotice = performance.now() + rand(1500, 3000); // a short pause before anyone notices again
+    };
+    window.addEventListener(TREE_DRAG_START, onTreeDragStart);
+    window.addEventListener(TREE_DRAG_END, onTreeDragEnd);
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    document.documentElement.addEventListener("mouseleave", onLeave);
+
+    let raf = 0;
+    let last = performance.now();
+
+    const frame = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      // 1. The dot glides after the mouse (quick, but smooth)
+      const follow = 1 - Math.exp(-dt * 28);
+      pos.x += (mouse.x - pos.x) * follow;
+      pos.y += (mouse.y - pos.y) * follow;
+      dot.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+
+      // The laser is "interesting" while it keeps moving
+      const lively = mouse.seen && now - mouse.lastMove < 2200;
+
+      // 2. Now and then, a random resting cat notices the dot
+      if (lively && !treeDragging && !reduced.matches && now > nextNotice) {
+        // Only one cat plays with the laser at a time: wait until everyone is back home
+        const busy = cats.some((c) => c.mode !== "home");
+        const candidates = cats.filter((c) => {
+          if (c.mode !== "home" || now < c.restUntil || c.el.classList.contains(styles.acting)) return false;
+          if (c.el.matches(":hover")) return false; // you're pointing at it (maybe about to click): leave it be
+          const r = c.el.getBoundingClientRect();
+          return r.bottom > 0 && r.top < window.innerHeight; // only cats you can see
+        });
+        if (!busy && candidates.length) {
+          // cats closer to the dot are a bit more likely to notice it
+          const weights = candidates.map((c) => {
+            const r = c.el.getBoundingClientRect();
+            return 1 / (Math.hypot(r.left + r.width / 2 - pos.x, r.top + r.height / 2 - pos.y) + 250);
+          });
+          let pick = Math.random() * weights.reduce((a, b) => a + b, 0);
+          const cat = candidates.find((_, i) => (pick -= weights[i]) <= 0) ?? candidates[0];
+          setMode(cat, "notice");
+          cat.until = now + rand(350, 700);
+        }
+        nextNotice = now + rand(NOTICE_GAP[0], NOTICE_GAP[1]);
+      }
+
+      // 3. Move every cat that's awake
+      for (const c of cats) {
+        if (c.mode === "home") continue;
+
+        if (treeDragging && (c.mode === "notice" || c.mode === "chase")) {
+          setMode(c, "return"); // the tree is being spun: lose interest and head home
+        } else if (c.mode === "notice" && now > c.until) {
+          setMode(c, "chase");
+          c.until = now + rand(3500, 8500); // how long it stays interested
+        } else if (c.mode === "chase" && (now > c.until || !lively)) {
+          setMode(c, "return");
+        }
+
+        // Where is the cat's own spot on screen right now? (its box minus how far it has moved)
+        const r = c.el.getBoundingClientRect();
+        const homeX = r.left + r.width / 2 - c.off.x;
+        const homeY = r.top + r.height / 2 - c.off.y;
+
+        let tx = 0;
+        let ty = 0;
+        let top = 0;
+        if (c.mode === "chase") {
+          // aim so the dot ends up near the cat's front paws
+          tx = pos.x - homeX;
+          ty = pos.y - homeY - r.height * 0.15;
+          top = c.topSpeed;
+        } else if (c.mode === "return") {
+          top = 170; // a calm walk home
+        }
+
+        if (top > 0) {
+          const dx = tx - c.off.x;
+          const dy = ty - c.off.y;
+          const dist = Math.hypot(dx, dy);
+          // slow down when arriving; accelerate gently so it curves and lags behind
+          const speed = top * Math.min(1, dist / 110);
+          const want = dist > 0.5 ? { x: (dx / dist) * speed, y: (dy / dist) * speed } : { x: 0, y: 0 };
+          const grip = 1 - Math.exp(-dt * (c.mode === "chase" ? 3.2 : 5));
+          c.vel.x += (want.x - c.vel.x) * grip;
+          c.vel.y += (want.y - c.vel.y) * grip;
+          c.off.x += c.vel.x * dt;
+          c.off.y += c.vel.y * dt;
+
+          // Pounce when it catches up with the dot
+          if (c.mode === "chase" && dist < 30 && now > c.nextPounce) {
+            c.nextPounce = now + rand(900, 1800);
+            c.el.classList.remove(styles.pounce);
+            void c.el.offsetWidth; // restart the animation
+            c.el.classList.add(styles.pounce);
+          }
+
+          // Back home: settle down and rest a while before playing again
+          if (c.mode === "return" && dist < 2 && Math.hypot(c.vel.x, c.vel.y) < 20) {
+            c.off = { x: 0, y: 0 };
+            c.vel = { x: 0, y: 0 };
+            c.restUntil = now + rand(5000, 13000);
+            setMode(c, "home");
+          }
+        }
+
+        // Face the way it's running (side-view cats flip; front-facing cats lean)
+        if (Math.abs(c.vel.x) > 25 && c.faces !== "front") {
+          const right = c.vel.x > 0;
+          c.flip = c.faces === "left" ? (right ? -1 : 1) : right ? 1 : -1;
+        }
+        // (setMode above may have just sent the cat home)
+        const settled = (c.mode as Chaser["mode"]) === "home";
+        if (settled) c.flip = 1;
+        const lean = c.faces === "front" ? Math.max(-12, Math.min(12, c.vel.x * 0.03)) : 0;
+        if (c.facing) c.facing.style.transform = `scaleX(${c.flip}) rotate(${lean}deg)`;
+        c.el.style.transform = settled ? "" : `translate3d(${c.off.x.toFixed(1)}px, ${c.off.y.toFixed(1)}px, 0)`;
+      }
+
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("mousemove", onMove);
+      document.documentElement.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener(TREE_DRAG_START, onTreeDragStart);
+      window.removeEventListener(TREE_DRAG_END, onTreeDragEnd);
+      host.classList.remove(styles.laserOn);
+      for (const c of cats) {
+        c.el.style.transform = "";
+        if (c.facing) c.facing.style.transform = "";
+        c.el.classList.remove(styles.noticing, styles.chasing, styles.returning, styles.pounce);
+      }
+    };
+  }, []);
+
+  return (
+    <div ref={dotRef} className={styles.laser} aria-hidden="true">
+      <span className={styles.laserDot} />
     </div>
   );
 }

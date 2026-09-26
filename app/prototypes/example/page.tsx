@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 import { Geist } from 'next/font/google';
-import Link from 'next/link';
+import BackHome from '../../components/back-home/BackHome';
 import { useState, useRef } from 'react';
 
 const geist = Geist({ subsets: ['latin'] });
@@ -81,14 +81,15 @@ export default function ExamplePrototype() {
          style={{
            background: `repeating-conic-gradient(${currentTheme.primary} 0% 25%, ${currentTheme.secondary} 0% 50%) 50% / 2px 2px`
          }}>
-      <div className={styles.buttonContainer}>
-        <Link href="/" className={styles.backButton} style={{
-          backgroundColor: currentTheme.light,
-          borderColor: currentTheme.secondary,
-          color: currentTheme.secondary,
-          boxShadow: `2px 2px 0 ${currentTheme.secondary}4D`
-        }}>☜</Link>
-      </div>
+      {/* Shared back button, recoloured with the current theme
+          (ears use the darker shade so they stand out on the checkered background) */}
+      <BackHome
+        variant="retro"
+        placement="floating"
+        accent={currentTheme.secondary}
+        surface={currentTheme.light}
+        ink={currentTheme.secondary}
+      />
       <div className={styles.themeContainer}>
         {(Object.keys(THEMES) as ThemeColor[]).map((color) => (
           <button

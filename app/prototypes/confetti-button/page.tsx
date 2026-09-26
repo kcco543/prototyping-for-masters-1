@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import styles from './styles.module.css';
-import Link from 'next/link';
+import BackHome from '../../components/back-home/BackHome';
 import confetti from 'canvas-confetti';
 
 export default function ConfettiButtonPrototype() {
@@ -24,9 +24,8 @@ export default function ConfettiButtonPrototype() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.buttonContainer}>
-        <Link href="/" className={styles.backButton}>←</Link>
-      </div>
+      {/* Shared back button, in this page's retro style: outlined, hard shadow, confetti-pink ears */}
+      <BackHome variant="retro" placement="floating" accent="#FF69B4" surface="#ffffff" ink="#000000" />
       
       <div className={styles.window}>
         <div className={styles.windowTitle}>

@@ -27,28 +27,8 @@
   gap: 0.5rem;
 }
 
-.backLink {
-  justify-self: start;
-  font-size: 0.9rem;
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.75;
-}
 
-/* On narrow screens the back link just says "Home" */
-.backShort {
-  display: none;
-}
 
-@media (max-width: 560px) {
-  .backFull { display: none; }
-  .backShort { display: inline; }
-}
-
-.backLink:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
 
 .title {
   font-family: var(--font-hand), cursive;
@@ -58,6 +38,7 @@
 }
 
 .pillButton {
+  white-space: nowrap;
   justify-self: end;
   padding: 0.35rem 0.8rem;
   border: 0;
@@ -70,7 +51,6 @@
 }
 
 .pillButton:focus-visible,
-.backLink:focus-visible,
 .revealButton:focus-visible,
 .arrow:focus-visible,
 .railItem:focus-visible {

@@ -42,45 +42,9 @@
   text-shadow: none;
 }
 
-.buttonContainer {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  justify-content: flex-start;
-  z-index: 2;
-}
 
-.backButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background-color: #e6f0ff;
-  color: #1a325e;
-  text-decoration: none;
-  border: 1px solid #1a325e;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: normal;
-  box-shadow: 2px 2px 0 rgba(26, 50, 94, 0.5);
-  transition: all 0.2s ease;
-  width: 32px;
-  height: 32px;
-}
 
-.backButton:hover {
-  background-color: #c5dbff;
-  transform: translateY(1px);
-  box-shadow: 1px 1px 0 rgba(26, 50, 94, 0.5);
-}
 
-.backButton:active {
-  background-color: #2a4b8d;
-  color: #e6f0ff;
-  transform: translateY(2px);
-  box-shadow: none;
-}
 
 .windowContent {
   background-color: #f5f8ff;

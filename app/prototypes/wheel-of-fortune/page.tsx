@@ -18,7 +18,7 @@
  * smooth.
  */
 
-import Link from "next/link";
+import BackHome from "../../components/back-home/BackHome";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import styles from "./styles.module.css";
 import { caveat, instrumentSans } from "../../fonts";
@@ -203,10 +203,8 @@ export default function WheelOfFortune() {
   return (
     <div className={`${styles.container} ${instrumentSans.className} ${caveat.variable}`}>
       <header className={styles.topBar}>
-        <Link href="/" className={styles.backLink}>
-          ← <span className={styles.backFull}>Jiaqi Yuan&apos;s prototypes</span>
-          <span className={styles.backShort}>Home</span>
-        </Link>
+        {/* Shared back button, in yarn orange on the warm paper of the stage */}
+        <BackHome accent="#e0522c" surface="#f6f0e4" ink="#211d1b" />
         <h1 className={styles.title}>Wheel of Fortune</h1>
         <span />
       </header>

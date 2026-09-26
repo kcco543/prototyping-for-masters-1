@@ -27,28 +27,8 @@
   gap: 0.5rem;
 }
 
-.backLink {
-  justify-self: start;
-  font-size: 0.9rem;
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.75;
-}
 
-.backLink:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
 
-/* On narrow screens the back link just says "Home" */
-.backShort {
-  display: none;
-}
-
-@media (max-width: 560px) {
-  .backFull { display: none; }
-  .backShort { display: inline; }
-}
 
 .title {
   font-family: var(--font-hand), cursive;
@@ -243,8 +223,7 @@
   transform: translateY(-2px) rotate(-1deg);
 }
 
-.againButton:focus-visible,
-.backLink:focus-visible {
+.againButton:focus-visible {
   outline: 2px dashed #2b2725;
   outline-offset: 3px;
 }

@@ -395,6 +395,155 @@
   .spotBooks { bottom: 3%; left: calc(50% - 70px); width: 140px; }
 }
 
+/* ---------- Laser pointer ---------- */
+
+/* Hide the normal cursor everywhere on the page (the red dot replaces it) */
+.laserOn,
+.laserOn * {
+  cursor: none !important;
+}
+
+/* The outer box is moved to the mouse position by JavaScript */
+.laser {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+.laserVisible {
+  opacity: 1;
+}
+
+/* A small bright red dot with a hot white-ish centre and a soft glow */
+.laserDot {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff4f0 0 15%, #ff3b30 38%, #e0100a 75%);
+  box-shadow:
+    0 0 3px 1px rgba(255, 45, 35, 0.9),
+    0 0 12px 5px rgba(255, 30, 20, 0.3);
+  animation: laserFlicker 1.6s ease-in-out infinite;
+  transition: transform 0.15s ease;
+}
+
+/* A little bigger over links and buttons, so they still feel clickable */
+.laserHover .laserDot {
+  transform: scale(1.45);
+}
+
+@keyframes laserFlicker {
+  0%, 100% { box-shadow: 0 0 3px 1px rgba(255, 45, 35, 0.9), 0 0 12px 5px rgba(255, 30, 20, 0.3); }
+  50% { box-shadow: 0 0 4px 1px rgba(255, 45, 35, 1), 0 0 16px 6px rgba(255, 30, 20, 0.38); }
+}
+
+/* ---------- Chasing the laser ---------- */
+
+.facing,
+.run {
+  display: block;
+}
+
+.run {
+  transform-origin: 50% 100%;
+}
+
+/* Awake cats run above the cards */
+.noticing,
+.chasing,
+.returning {
+  z-index: 5;
+}
+
+/* "!" when a cat notices the dot */
+.alert {
+  position: absolute;
+  top: -0.6rem;
+  right: 18%;
+  z-index: 3;
+  color: #e8453c;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.noticing .alert {
+  animation: alertPop 0.7s ease-out;
+}
+
+@keyframes alertPop {
+  0% { opacity: 0; transform: translateY(6px) scale(0.4); }
+  30% { opacity: 1; transform: translateY(-4px) scale(1.2); }
+  80% { opacity: 1; transform: translateY(-4px) scale(1); }
+  100% { opacity: 0; transform: translateY(-8px) scale(1); }
+}
+
+/* Crouch and wiggle before the dash */
+.noticing .run {
+  animation: crouch 0.5s ease-in-out;
+}
+
+@keyframes crouch {
+  0% { transform: scale(1, 1); }
+  35% { transform: scale(1.06, 0.88) translateX(-2px); }
+  55% { transform: scale(1.06, 0.88) translateX(2px); }
+  75% { transform: scale(1.06, 0.88) translateX(-1px); }
+  100% { transform: scale(1, 1); }
+}
+
+/* Running: a quick bounce, tails whipping, legs going */
+.chasing .run {
+  animation: runBounce 0.3s ease-in-out infinite;
+}
+
+.returning .run {
+  animation: runBounce 0.45s ease-in-out infinite;
+}
+
+@keyframes runBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(-2deg); }
+}
+
+.chasing .idleTail {
+  animation: bigSwish 0.7s ease-in-out infinite;
+}
+
+.chasing .legA,
+.returning .legA {
+  animation: step 0.3s ease-in-out infinite;
+}
+
+.chasing .legB,
+.returning .legB {
+  animation: step 0.3s ease-in-out -0.15s infinite;
+}
+
+/* Pounce when it catches up with the dot */
+.pounce .run {
+  animation: pounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+@keyframes pounce {
+  0% { transform: scale(1, 1); }
+  30% { transform: scale(1.1, 0.8); }
+  60% { transform: translateY(-16px) scale(0.94, 1.1); }
+  100% { transform: scale(1, 1); }
+}
+
 /* ---------- Respect "reduce motion" system settings ---------- */
 
 @media (prefers-reduced-motion: reduce) {

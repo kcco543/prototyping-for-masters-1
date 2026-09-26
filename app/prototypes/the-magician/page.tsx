@@ -11,7 +11,7 @@
  * The page moves between three "phases": choose → casting → revealed.
  */
 
-import Link from "next/link";
+import BackHome from "../../components/back-home/BackHome";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import styles from "./styles.module.css";
@@ -156,10 +156,8 @@ export default function TheMagician() {
   return (
     <div className={`${styles.container} ${instrumentSans.className} ${caveat.variable}`}>
       <header className={styles.topBar}>
-        <Link href="/" className={styles.backLink}>
-          ← <span className={styles.backFull}>Jiaqi Yuan&apos;s prototypes</span>
-          <span className={styles.backShort}>Home</span>
-        </Link>
+        {/* Shared back button, in the pink sparkle from the stage */}
+        <BackHome accent="#e97fc7" />
         <h1 className={styles.title}>The Magician</h1>
         <button
           type="button"

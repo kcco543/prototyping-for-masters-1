@@ -15,7 +15,7 @@
  *   so it follows the mouse or finger with no delay.
  */
 
-import Link from "next/link";
+import BackHome from "../../components/back-home/BackHome";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import styles from "./styles.module.css";
 import { caveat, instrumentSans } from "../../fonts";
@@ -457,10 +457,8 @@ export default function TheTower() {
   return (
     <div className={`${styles.container} ${instrumentSans.className} ${caveat.variable}`}>
       <header className={styles.topBar}>
-        <Link href="/" className={styles.backLink}>
-          ← <span className={styles.backFull}>Jiaqi Yuan&apos;s prototypes</span>
-          <span className={styles.backShort}>Home</span>
-        </Link>
+        {/* Shared back button, in the red of the cups and the play button */}
+        <BackHome accent="#e8453c" />
         <h1 className={styles.title}>The Tower</h1>
         <button type="button" className={styles.muteButton} onClick={toggleMute} aria-pressed={muted}>
           {muted ? "Sound off" : "Sound on"}
