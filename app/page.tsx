@@ -47,6 +47,16 @@ export default function Home() {
       path: '/prototypes/wheel-of-fortune',
       room: 'barrel'
     },
+    {
+      title: 'WANT',
+      description: 'A Church of Consumption: five Swiss Style posters about desire, receipts and waste.',
+      path: '/prototypes/want-posters'
+    },
+    {
+      title: 'Typography Experiments',
+      description: 'Type a sentence and push the letters around: mouse repulsion sculpts variable fonts on a ring, a wave and a 3D plane.',
+      path: '/prototypes/typography-experiments'
+    },
     // Add your new prototypes here like this:
     // {
     //   title: 'Your new prototype',
