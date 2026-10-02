@@ -67,6 +67,11 @@ export default function Home() {
       description: 'Blur, wobble, recolour and light up the tabby with sliders, and ripple it like water. Built with PixiJS filters.',
       path: '/prototypes/dream-cat'
     },
+    {
+      title: 'Yarn Toy',
+      description: 'Dangle a ball of yarn on a floppy string and tease the cat paw until it swats. Built with a PixiJS MeshRope.',
+      path: '/prototypes/yarn-toy'
+    },
     // Add your new prototypes here like this:
     // {
     //   title: 'Your new prototype',

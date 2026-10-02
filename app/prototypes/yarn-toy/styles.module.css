@@ -1,0 +1,116 @@
+/*
+  Yarn Toy — styles.
+  The play area fills the whole screen with the homepage's soft sky-blue.
+  The header and footer float on top of it.
+*/
+
+.container {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  color: #2b2725;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(243, 192, 74, 0.22), transparent 30%),
+    radial-gradient(circle at 85% 35%, rgba(236, 142, 133, 0.2), transparent 32%),
+    radial-gradient(circle at 50% 100%, rgba(240, 137, 61, 0.14), transparent 40%),
+    #e6f0f1;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* The PixiJS canvas fills this area (resizeTo: this element) */
+.stage {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none; /* a finger moves the yarn instead of scrolling */
+}
+
+.stage:focus-visible {
+  outline: 3px dashed #2b2725;
+  outline-offset: -8px;
+  border-radius: 18px;
+}
+
+/* Class added to PixiJS's <canvas> in page.tsx */
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* Header and footer float above the play area. pointer-events: none lets
+   the mouse "pass through" them, so the yarn keeps following underneath. */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  pointer-events: none;
+  z-index: 1; /* above the play area */
+}
+
+/* …except the back button, which still needs clicks */
+.header a {
+  pointer-events: auto;
+}
+
+.title {
+  font-family: var(--font-hand), cursive;
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: min(360px, 60vw);
+  padding: 1rem 1.25rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.help {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+.count {
+  font-family: var(--font-hand), cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.countNumber {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hidden on screen but still read by screen readers */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .footer {
+    max-width: 58vw;
+  }
+
+  .help {
+    font-size: 0.75rem;
+  }
+}
