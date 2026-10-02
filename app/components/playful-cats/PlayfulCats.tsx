@@ -309,37 +309,48 @@ function CalicoCat() {
   );
 }
 
+/**
+ * The orange tabby's drawing on its own (no button around it). Exported so
+ * other pages, like the Dream Cat prototype, can reuse the same illustration.
+ * viewBox: "0 0 280 175"
+ */
+export function TabbyArt() {
+  return (
+    <g className={styles.roller} style={pivot(150, 120)}>
+      <g className={`${styles.idleTail} ${styles.tabbyTail}`} style={pivot(236, 146)}>
+        <path d="M236 146 C262 150 270 164 250 166 C226 168 214 160 198 164" stroke={ORANGE} strokeWidth={10} fill="none" strokeLinecap="round" />
+        <path d="M246 150 l-3 7 M232 160 l-2 7 M216 160 l-1 6" stroke={ORANGE_DARK} strokeWidth={2.5} strokeLinecap="round" />
+      </g>
+      <g filter={GRAIN}>
+        <path d="M60 150 C40 150 36 118 60 104 C90 88 140 86 190 88 C236 90 256 112 250 136 C246 152 226 156 200 154Z" fill={ORANGE} />
+        <path d="M66 150 C42 152 24 150 20 142 C18 134 28 132 42 136 L72 138Z" fill={ORANGE} />
+      </g>
+      <path
+        d="M150 92 C156 104 158 118 154 130 M170 90 C178 104 180 120 176 132 M190 92 C198 106 200 120 196 132 M212 96 C220 108 222 122 218 132"
+        stroke={ORANGE_DARK}
+        strokeWidth={3}
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path d="M190 152 C176 138 186 118 206 118 C228 118 236 136 226 152" stroke={ORANGE_DARK} strokeWidth={1.8} fill="none" />
+      <Toes x={24} y={148} n={2} gap={5} />
+      <g>
+        <g filter={GRAIN}>
+          <path d={headD(80, 76)} fill={ORANGE} />
+        </g>
+        <path d="M53 40 L66 50 L55 55Z" fill={ORANGE_LIGHT} />
+        <path d="M72 48 l2 8 M80 46 l0 9 M88 48 l-2 8" stroke={ORANGE_DARK} strokeWidth={2.5} strokeLinecap="round" />
+        <Face cx={80} cy={76} eye={CREAM} />
+      </g>
+    </g>
+  );
+}
+
 /** Orange tabby lying down with its paws stretched forward. */
 function TabbyCat() {
   return (
     <Cat name="Orange tabby cat" action="roll over" say="wheee!" duration={1700} spot={styles.spotTabby} viewBox="0 0 280 175" blinkDelay={4.5} faces="left">
-      <g className={styles.roller} style={pivot(150, 120)}>
-        <g className={`${styles.idleTail} ${styles.tabbyTail}`} style={pivot(236, 146)}>
-          <path d="M236 146 C262 150 270 164 250 166 C226 168 214 160 198 164" stroke={ORANGE} strokeWidth={10} fill="none" strokeLinecap="round" />
-          <path d="M246 150 l-3 7 M232 160 l-2 7 M216 160 l-1 6" stroke={ORANGE_DARK} strokeWidth={2.5} strokeLinecap="round" />
-        </g>
-        <g filter={GRAIN}>
-          <path d="M60 150 C40 150 36 118 60 104 C90 88 140 86 190 88 C236 90 256 112 250 136 C246 152 226 156 200 154Z" fill={ORANGE} />
-          <path d="M66 150 C42 152 24 150 20 142 C18 134 28 132 42 136 L72 138Z" fill={ORANGE} />
-        </g>
-        <path
-          d="M150 92 C156 104 158 118 154 130 M170 90 C178 104 180 120 176 132 M190 92 C198 106 200 120 196 132 M212 96 C220 108 222 122 218 132"
-          stroke={ORANGE_DARK}
-          strokeWidth={3}
-          fill="none"
-          strokeLinecap="round"
-        />
-        <path d="M190 152 C176 138 186 118 206 118 C228 118 236 136 226 152" stroke={ORANGE_DARK} strokeWidth={1.8} fill="none" />
-        <Toes x={24} y={148} n={2} gap={5} />
-        <g>
-          <g filter={GRAIN}>
-            <path d={headD(80, 76)} fill={ORANGE} />
-          </g>
-          <path d="M53 40 L66 50 L55 55Z" fill={ORANGE_LIGHT} />
-          <path d="M72 48 l2 8 M80 46 l0 9 M88 48 l-2 8" stroke={ORANGE_DARK} strokeWidth={2.5} strokeLinecap="round" />
-          <Face cx={80} cy={76} eye={CREAM} />
-        </g>
-      </g>
+      <TabbyArt />
     </Cat>
   );
 }
@@ -655,6 +666,26 @@ function Leaf({ className }: { className: string }) {
 
 /* ---------- Exports used by the homepage ---------- */
 
+/** The grain filter on its own (it must live inside an <svg>). */
+export function GrainFilter() {
+  return (
+    <filter id="catGrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves={2} seed={7} result="noise" />
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.8 0 0 0 -0.42" result="dark" />
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.8 0 0 -0.42" result="light" />
+      <feMerge result="specks">
+        <feMergeNode in="dark" />
+        <feMergeNode in="light" />
+      </feMerge>
+      <feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped" />
+      <feMerge>
+        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="clipped" />
+      </feMerge>
+    </filter>
+  );
+}
+
 /**
  * Shared SVG definitions. The grain filter sprinkles tiny light and dark
  * specks over the fur so it looks printed, like the original illustration.
@@ -662,20 +693,7 @@ function Leaf({ className }: { className: string }) {
 export function CatDefs() {
   return (
     <svg width="0" height="0" className={styles.defs} aria-hidden="true" focusable="false">
-      <filter id="catGrain" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves={2} seed={7} result="noise" />
-        <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.8 0 0 0 -0.42" result="dark" />
-        <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.8 0 0 -0.42" result="light" />
-        <feMerge result="specks">
-          <feMergeNode in="dark" />
-          <feMergeNode in="light" />
-        </feMerge>
-        <feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped" />
-        <feMerge>
-          <feMergeNode in="SourceGraphic" />
-          <feMergeNode in="clipped" />
-        </feMerge>
-      </filter>
+      <GrainFilter />
     </svg>
   );
 }

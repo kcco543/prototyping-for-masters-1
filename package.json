@@ -17,6 +17,7 @@
     "@types/canvas-confetti": "^1.9.0",
     "canvas-confetti": "^1.9.3",
     "next": "^15.5.25",
+    "pixi.js": "^8.22.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.186.1"

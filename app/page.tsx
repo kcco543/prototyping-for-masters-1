@@ -57,6 +57,16 @@ export default function Home() {
       description: 'Type a sentence and push the letters around: mouse repulsion sculpts variable fonts on a ring, a wave and a 3D plane.',
       path: '/prototypes/typography-experiments'
     },
+    {
+      title: 'Catnip Fireworks',
+      description: 'Click anywhere to burst hundreds of paw prints and stars. Built with PixiJS particles.',
+      path: '/prototypes/catnip-fireworks'
+    },
+    {
+      title: 'Dream Cat',
+      description: 'Blur, wobble, recolour and light up the tabby with sliders, and ripple it like water. Built with PixiJS filters.',
+      path: '/prototypes/dream-cat'
+    },
     // Add your new prototypes here like this:
     // {
     //   title: 'Your new prototype',
