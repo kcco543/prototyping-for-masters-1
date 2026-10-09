@@ -1,0 +1,216 @@
+/*
+  Purr Type — styles.
+  Same family as the homepage: pale sky-blue page, cream cards,
+  hand-lettered type. The PixiJS canvas is transparent and fills the page.
+*/
+
+.container {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  color: #2b2725;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(243, 192, 74, 0.22), transparent 28%),
+    radial-gradient(circle at 88% 30%, rgba(236, 142, 133, 0.2), transparent 30%),
+    radial-gradient(circle at 50% 95%, rgba(240, 137, 61, 0.14), transparent 35%),
+    #e6f0f1;
+}
+
+/* The PixiJS canvas fills this area (resizeTo: this element) */
+.stage {
+  position: absolute;
+  inset: 0;
+  touch-action: none; /* a finger can scatter letters instead of scrolling */
+}
+
+/* class added to PixiJS's <canvas> in page.tsx */
+.canvas {
+  display: block;
+}
+
+.topBar {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  pointer-events: none;
+}
+
+.topBar > * {
+  pointer-events: auto;
+}
+
+.title {
+  font-family: var(--font-hand), cursive;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------- Controls ---------- */
+
+.panel {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: min(760px, calc(100% - 2rem));
+  padding: 0.75rem 0.9rem;
+  border-radius: 22px;
+  background: #fffaf2;
+  transform: translateX(-50%);
+  box-shadow:
+    0 2px 0 rgba(43, 39, 37, 0.06),
+    0 14px 30px -16px rgba(43, 39, 37, 0.35);
+}
+
+.inputWrap {
+  flex: 1 1 160px;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem 0.9rem;
+  border: 1.5px solid rgba(43, 39, 37, 0.25);
+  border-radius: 999px;
+  background: #fff;
+  color: inherit;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.4rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.input:focus-visible {
+  border-color: #ec8e85;
+  box-shadow: 0 0 0 3px rgba(236, 142, 133, 0.35);
+}
+
+.group {
+  display: flex;
+  border: 1.5px solid #2b2725;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.chip {
+  padding: 0.45rem 0.8rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip + .chip {
+  border-left: 1.5px solid #2b2725;
+}
+
+.chip[aria-pressed="true"] {
+  background: #2b2725;
+  color: #fffaf2;
+}
+
+.benchButton {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #ec8e85;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.benchButton:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.chip:focus-visible,
+.benchButton:focus-visible,
+.benchClose:focus-visible {
+  outline: 2px dashed #2b2725;
+  outline-offset: 3px;
+}
+
+.stats {
+  flex-basis: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Benchmark results ---------- */
+
+.bench {
+  position: absolute;
+  top: 4.5rem;
+  right: 1rem;
+  z-index: 2;
+  max-width: min(560px, calc(100% - 2rem));
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: #fffaf2;
+  box-shadow: 0 14px 30px -14px rgba(43, 39, 37, 0.4);
+}
+
+.benchTitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.benchClose {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  border: 0;
+  background: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.th,
+.td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(43, 39, 37, 0.12);
+}
+
+.th {
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

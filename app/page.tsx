@@ -72,6 +72,16 @@ export default function Home() {
       description: 'Dangle a ball of yarn on a floppy string and tease the cat paw until it swats. Built with a PixiJS MeshRope.',
       path: '/prototypes/yarn-toy'
     },
+    {
+      title: 'Purr Type',
+      description: 'Type a word and watch its letters purr. Scatter them with the mouse. PixiJS SplitText.',
+      path: '/prototypes/purr-type'
+    },
+    {
+      title: 'Cat Spellbook',
+      description: 'Doodle in an enchanted storybook with five magical brushes while the cats watch. p5.js and Tone.js.',
+      path: '/prototypes/cat-spellbook'
+    },
     // Add your new prototypes here like this:
     // {
     //   title: 'Your new prototype',
