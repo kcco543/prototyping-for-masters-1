@@ -405,7 +405,7 @@
 }
 
 .portalText {
-  color: #fffaf2;
+  color: #1f2749; /* dark navy reads clearly on every room's accent colour */
   font-family: var(--font-hand), cursive;
   font-size: clamp(2rem, 6vw, 3.2rem);
   font-weight: 700;

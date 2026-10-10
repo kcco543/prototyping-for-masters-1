@@ -38,7 +38,9 @@ When asked to create or make a prototype:
 3. Build the prototype by updating its `page.tsx`, `styles.module.css`, and any
    other prototype-local files.
 4. Install only the dependencies the prototype needs.
-5. Add the prototype to the `prototypes` array on the homepage.
+5. Add the prototype to the `projects` array in `app/data/projects.ts`. The
+   homepage builds its cards and category filters from that array. Only use
+   `status: "live"` for a prototype whose page exists and works.
 6. Verify that the homepage and the prototype route both build and work.
 
 ## CSS

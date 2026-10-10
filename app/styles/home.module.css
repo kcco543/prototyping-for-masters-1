@@ -1,49 +1,393 @@
 /*
-  Homepage styles, inspired by the "stay home" cat poster:
-  a soft sky-blue background, flat warm colours and hand-lettered type.
+  Homepage styles: "Jiaqi's Little Universe".
+
+  The look: a warm cream page, dark navy type, and small touches of muted
+  lavender, soft pink and antique gold. Big serif headlines (editorial) sit
+  next to hand-drawn cats and a few stars (playful).
+
+  How to read this file:
+  - `.page` holds the DESIGN TOKENS: every colour used on the homepage, as a
+    CSS variable. The components in app/components/gallery and
+    app/components/celestial use these same variables, so changing a colour
+    here changes it everywhere.
+  - Then the sections follow in page order: header, hero, about, lounge, footer.
 */
 
 .page {
-  /* The cats on wide screens are positioned relative to this box */
+  /* ---------- Design tokens ---------- */
+  --cream: #f8f2e4; /* page background */
+  --cream-deep: #efe6d2;
+  --paper: #fffaf0; /* cards */
+  --navy: #1f2749; /* text */
+  --navy-muted: #555b77; /* quieter text (still easy to read on cream) */
+  --hairline: rgba(31, 39, 73, 0.13); /* thin dividing lines */
+  --hairline-strong: rgba(31, 39, 73, 0.28);
+  --lavender-soft: #e4def3;
+  --lavender-deep: #8f82c4;
+  --lavender-ink: #6f61ad; /* lavender dark enough for large text */
+  --pink: #f2c9c6;
+  --pink-deep: #d98a8c;
+  --gold: #c19a45; /* antique gold, for lines and ornaments */
+  --gold-deep: #7d5f18; /* gold dark enough for small text */
+  --gutter: clamp(1.25rem, 4vw, 2.5rem); /* space at the left and right of the page */
+
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
-  color: #2b2725;
-  background:
-    radial-gradient(circle at 12% 18%, rgba(243, 192, 74, 0.22), transparent 28%),
-    radial-gradient(circle at 88% 30%, rgba(236, 142, 133, 0.2), transparent 30%),
-    radial-gradient(circle at 50% 95%, rgba(240, 137, 61, 0.14), transparent 35%),
-    #e6f0f1;
+  background: var(--cream);
+  color: var(--navy);
 }
 
+/* Centres content and keeps lines from getting too long on big screens */
 .container {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 3rem 1.25rem 4rem;
+  width: min(100% - 2 * var(--gutter), 1180px);
+  margin-inline: auto;
 }
+
+/* Hidden until a keyboard user presses Tab; then it appears in the corner */
+.skipLink {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: var(--navy);
+  color: var(--cream);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus-visible {
+  transform: none;
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- Header ---------- */
 
 .header {
-  position: relative;
-  z-index: 1;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.4rem;
 }
 
-.title {
-  font-family: var(--font-hand), cursive;
-  font-size: clamp(3rem, 9vw, 4.75rem);
-  font-weight: 700;
-  line-height: 1;
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: inherit;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.3rem;
+  line-height: 1.1;
+  text-decoration: none;
 }
 
-.hint {
-  margin-top: 0.5rem;
+.wordmarkCat {
+  width: 1.35rem;
+  height: auto;
+  flex: none;
+  fill: var(--navy);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wordmarkEye {
+  fill: var(--cream);
+}
+
+.wordmark:hover .wordmarkCat {
+  transform: rotate(-10deg);
+}
+
+.nav {
+  display: flex;
+  gap: clamp(1.1rem, 3vw, 2rem);
+}
+
+.navLink,
+.footerLink,
+.textLink {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.35em;
+  transition: text-decoration-color 0.25s ease;
+}
+
+.navLink {
+  padding-block: 0.5rem; /* a taller area to tap */
   font-size: 0.95rem;
-  opacity: 0.65;
 }
 
-/* Leave room at the bottom for the cats that roam the page on wide screens */
-@media (min-width: 1200px) {
-  .page {
-    min-height: max(100vh, 1150px);
+.navLink:hover,
+.footerLink:hover {
+  text-decoration-color: var(--gold);
+}
+
+.wordmark:focus-visible,
+.navLink:focus-visible,
+.footerLink:focus-visible,
+.textLink:focus-visible,
+.button:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: clamp(1.5rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3.5rem);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--navy-muted);
+}
+
+.eyebrowStar {
+  color: var(--gold);
+  font-size: 0.9rem;
+}
+
+.heroTitle {
+  margin-top: 1.25rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.3rem, 13.5vw, 6.25rem);
+  font-weight: 400;
+  line-height: 0.93;
+  letter-spacing: -0.02em;
+}
+
+/* Each part of the headline sits on its own line */
+.heroLine {
+  display: block;
+}
+
+.heroItalic {
+  font-style: italic;
+  color: var(--lavender-ink);
+}
+
+.heroLead {
+  max-width: 31ch;
+  margin-top: 1.5rem;
+  font-size: clamp(1.1rem, 1.7vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--navy-muted);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+  margin-top: 2rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  background: var(--navy);
+  color: var(--cream);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.25s ease;
+}
+
+.button:hover {
+  background: #2c3665;
+}
+
+.buttonArrow {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.button:hover .buttonArrow {
+  transform: translateY(3px);
+}
+
+.button:focus-visible {
+  border-radius: 999px;
+}
+
+.textLink {
+  padding-block: 0.5rem;
+  text-decoration-color: var(--gold);
+}
+
+.textLink:hover {
+  text-decoration-color: var(--navy);
+}
+
+/* The cat tree, with the moon behind it */
+.heroArt {
+  position: relative;
+}
+
+.heroSky {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  z-index: 0;
+  width: min(118%, 620px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Wide screens: text on the left, cat tree on the right */
+@media (min-width: 960px) {
+  .hero {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 3rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(4.6rem, 8.2vw, 6.25rem);
+  }
+}
+
+/* A thin line with a star in the middle, between the hero and the rest */
+.rule {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  color: var(--gold);
+}
+
+.rule::before,
+.rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--hairline-strong);
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  padding-block: clamp(3rem, 7vw, 5.5rem);
+  /* when a header link jumps here, leave a little air above the heading */
+  scroll-margin-top: 0.5rem;
+}
+
+/* ---------- About ---------- */
+
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0 4rem;
+  border-top: 1px solid var(--hairline);
+}
+
+@media (min-width: 860px) {
+  .about {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+}
+
+.aboutLead {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+  line-height: 1.25;
+}
+
+.aboutText {
+  max-width: 56ch;
+  margin-top: 1.1rem;
+  line-height: 1.65;
+  color: var(--navy-muted);
+}
+
+.facts {
+  margin-top: 2rem;
+  border-top: 1px solid var(--hairline-strong);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 0.8rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.factLabel {
+  padding-top: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--navy-muted);
+}
+
+.factValue {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ---------- The cat lounge ---------- */
+
+.lounge {
+  width: min(100% - 2 * var(--gutter), 1320px);
+  margin-inline: auto;
+}
+
+.loungeNote {
+  font-family: var(--font-hand), cursive;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--navy-muted);
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-block: 1.4rem 2.25rem;
+  font-size: 0.88rem;
+  color: var(--navy-muted);
+}
+
+.footerLink {
+  padding-block: 0.5rem;
+}
+
+/* ---------- Respect "reduce motion" system settings ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmarkCat,
+  .buttonArrow {
+    transition: none;
+  }
+
+  .wordmark:hover .wordmarkCat,
+  .button:hover .buttonArrow {
+    transform: none;
   }
 }

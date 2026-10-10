@@ -44,17 +44,24 @@ the included `.nvmrc` or `.node-version` file to select the correct version.
    - Modify the styles in `styles.module.css`
    - Add images to your prototype's `images` folder
 6. Add your prototype to the home page:
-   - Open `app/page.tsx`
-   - Find the `prototypes` array at the top of the file
-   - Add a new object for your prototype:
+   - Open `app/data/projects.ts`
+   - Find the `projects` array
+   - Add a new entry for your prototype:
      ```typescript
      {
-       title: 'My New Prototype',
-       description: 'A short description of what this prototype does',
-       path: '/prototypes/my-prototype'  // This should match your folder name
+       id: "my-prototype",
+       title: "My New Prototype",
+       description: "One short sentence about what this prototype does.",
+       category: "experiments",           // "tarot" | "cat-play" | "experiments"
+       tags: ["p5.js"],                   // technology tags, or [] for none
+       thumbnail: "",                     // a 4:3 image in /public, or "" for a placeholder
+       href: "/prototypes/my-prototype",  // This should match your folder name
+       featured: false,                   // true = also shown big in "Featured Projects"
+       status: "live",                    // "coming-soon" shows the card without a link
      }
      ```
-   - Your prototype will automatically appear on the home page
+   - Your prototype will automatically appear on the home page as a card,
+     and the category filters and counts update by themselves
 
 ### Example structure
 ```

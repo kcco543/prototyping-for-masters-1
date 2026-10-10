@@ -664,7 +664,7 @@ function Leaf({ className }: { className: string }) {
   );
 }
 
-/* ---------- Exports used by the homepage ---------- */
+/* ---------- Exports used by the homepage (and a few prototypes) ---------- */
 
 /** The grain filter on its own (it must live inside an <svg>). */
 export function GrainFilter() {
@@ -699,32 +699,31 @@ export function CatDefs() {
 }
 
 /**
- * The cats are split into two groups. On small screens each group shows up
- * as a row of cats (above and below the cards). On wide screens the groups
- * "dissolve" (display: contents) and every cat is placed around the page.
+ * The cat lounge: every cat sitting side by side on one "floor" line. It is
+ * one long row on wide screens and wraps onto a few rows on small ones.
+ *
+ * The laser pointer lives in here too, and only works inside the lounge. So
+ * the cats play in their own space and can never run across (or sit on top
+ * of) the rest of the page.
  */
-export function TopCats() {
+export function CatLounge() {
   return (
-    <div className={styles.cluster}>
+    <div className={styles.lounge}>
+      <LaserPointer />
+      <Leaf className={styles.spotLeaf} />
       <BlackCat />
       <CalicoCat />
       <TabbyCat />
       <StretchCat />
       <Mouse />
-      <Plant className={styles.spotPlant} />
-    </div>
-  );
-}
-
-export function BottomCats() {
-  return (
-    <div className={styles.cluster}>
+      {/* On small screens the row breaks here, so no cat ends up alone on a line */}
+      <span className={styles.rowBreak} aria-hidden="true" />
       <YarnCat />
       <LoafCat />
       <BookCat />
       <BackCat />
       <ArchCat />
-      <Leaf className={styles.spotLeaf} />
+      <Plant className={styles.spotPlant} />
     </div>
   );
 }
@@ -764,6 +763,9 @@ const rand = (a: number, b: number) => a + Math.random() * (b - a);
  *   walks back to its own spot.
  * - While you're dragging the cat tree to spin it, the cats ignore the dot
  *   (anyone already chasing it heads home) and pick up again after you let go.
+ * - The laser only exists inside the element this component is placed in
+ *   (its "host", the cat lounge). Outside it you get your normal cursor back,
+ *   and a chasing cat is never allowed to leave the host's box.
  *
  * Only the cat's position is changed; the drawings themselves stay the
  * same. It's switched off on touch screens (no mouse) and for people who
@@ -779,9 +781,10 @@ export function LaserPointer() {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    host.classList.add(styles.laserOn); // hides the normal cursor on the page
+    host.classList.add(styles.laserOn); // hides the normal cursor inside the host
 
-    const mouse = { x: -100, y: -100, seen: false, lastMove: 0 };
+    // known: have we seen the mouse at all? inside: is it over the host right now?
+    const mouse = { x: -100, y: -100, known: false, inside: false, lastMove: 0 };
     const pos = { x: -100, y: -100 };
     // How often a cat gets a chance to notice the dot (kept fairly rare so it
     // doesn't get in the way of the page or the cats' click actions)
@@ -809,23 +812,20 @@ export function LaserPointer() {
       c.el.classList.toggle(styles.returning, mode === "return");
     };
 
+    // The mouse handlers only take notes. Whether the dot is shown is decided
+    // once per frame (below), because scrolling can also move the host under
+    // a mouse that is holding still.
     const onMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
+      mouse.known = true;
       mouse.lastMove = performance.now();
-      if (!mouse.seen) {
-        mouse.seen = true;
-        pos.x = mouse.x;
-        pos.y = mouse.y;
-      }
-      dot.classList.add(styles.laserVisible);
       // grow the dot a little over links and buttons, so you can tell they're clickable
-      const target = e.target as Element | null;
+      const target = e.target instanceof Element ? e.target : null;
       dot.classList.toggle(styles.laserHover, !!target?.closest("a, button"));
     };
     const onLeave = () => {
-      dot.classList.remove(styles.laserVisible);
-      mouse.lastMove = 0; // cats lose interest when the dot disappears
+      mouse.known = false; // the mouse left the window: the dot disappears and the cats lose interest
     };
     // While the cat tree is being dragged, the cats ignore the laser
     let treeDragging = false;
@@ -847,14 +847,27 @@ export function LaserPointer() {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
 
+      // 0. Is the mouse over the cats' area? The laser only exists in there.
+      const area = host.getBoundingClientRect();
+      const inside = mouse.known && mouse.x >= area.left && mouse.x <= area.right && mouse.y >= area.top && mouse.y <= area.bottom;
+      if (inside !== mouse.inside) {
+        mouse.inside = inside;
+        dot.classList.toggle(styles.laserVisible, inside);
+        if (inside) {
+          // just came in: start the dot right under the mouse instead of gliding in from far away
+          pos.x = mouse.x;
+          pos.y = mouse.y;
+        }
+      }
+
       // 1. The dot glides after the mouse (quick, but smooth)
       const follow = 1 - Math.exp(-dt * 28);
       pos.x += (mouse.x - pos.x) * follow;
       pos.y += (mouse.y - pos.y) * follow;
       dot.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
 
-      // The laser is "interesting" while it keeps moving
-      const lively = mouse.seen && now - mouse.lastMove < 2200;
+      // The laser is "interesting" while it's in the cats' area and keeps moving
+      const lively = inside && now - mouse.lastMove < 2200;
 
       // 2. Now and then, a random resting cat notices the dot
       if (lively && !treeDragging && !reduced.matches && now > nextNotice) {
@@ -905,6 +918,10 @@ export function LaserPointer() {
           // aim so the dot ends up near the cat's front paws
           tx = pos.x - homeX;
           ty = pos.y - homeY - r.height * 0.15;
+          // …but keep the whole cat inside the cats' area, so it never covers the rest of the page
+          // (8px spare at the top, because a running cat bounces up a little)
+          tx = Math.max(area.left + r.width / 2 - homeX, Math.min(area.right - r.width / 2 - homeX, tx));
+          ty = Math.max(area.top + 8 + r.height / 2 - homeY, Math.min(area.bottom - r.height / 2 - homeY, ty));
           top = c.topSpeed;
         } else if (c.mode === "return") {
           top = 170; // a calm walk home

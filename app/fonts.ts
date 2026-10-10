@@ -1,4 +1,15 @@
-import { Caveat, Instrument_Sans } from 'next/font/google';
+import { Caveat, Instrument_Sans, Instrument_Serif } from 'next/font/google';
+
+// Editorial serif for the homepage's big headlines and card titles.
+// It is the serif companion of Instrument Sans, so the two sit well together.
+// `variable` exposes it as a CSS custom property: var(--font-display)
+export const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+});
 
 export const instrumentSans = Instrument_Sans({
   subsets: ['latin'],

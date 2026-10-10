@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><defs><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/><feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.8 0 0 0 -0.42" result="dark"/><feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.8 0 0 -0.42" result="light"/><feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge><feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge></filter><filter id="gs" x="-100%" y="-100%" width="300%" height="300%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/><feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.8 0 0 0 -0.42" result="dark"/><feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.8 0 0 -0.42" result="light"/><feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge><feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge></filter><filter id="gb" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/><feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.5 0 0 0 -0.3" result="dark"/><feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.5 0 0 -0.3" result="light"/><feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge><feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge></filter></defs><rect width="800" height="600" fill="#e4def3" filter="url(#gb)"/>
+<path d="M150 126 Q153.8 146.2 174 150 Q153.8 153.8 150 174 Q146.2 153.8 126 150 Q146.2 146.2 150 126Z" fill="#c19a45" /><path d="M100 240 Q101.6 248.4 110 250 Q101.6 251.6 100 260 Q98.4 251.6 90 250 Q98.4 248.4 100 240Z" fill="#8f82c4" /><path d="M668 105 Q670.1 115.9 681 118 Q670.1 120.1 668 131 Q665.9 120.1 655 118 Q665.9 115.9 668 105Z" fill="#d98a8c" /><path d="M700 456 Q703.2 472.8 720 476 Q703.2 479.2 700 496 Q696.8 479.2 680 476 Q696.8 472.8 700 456Z" fill="#c19a45" /><circle cx="232" cy="96" r="4" fill="#1f2749" opacity=".4"/><circle cx="126" cy="440" r="4" fill="#1f2749" opacity=".4"/>
+<rect x="285" y="150" width="230" height="320" rx="18" fill="#8f82c4" transform="rotate(-15 400 500)" filter="url(#g)"/>
+<rect x="285" y="150" width="230" height="320" rx="18" fill="#d98a8c" transform="rotate(11 400 500)" filter="url(#g)"/>
+<g transform="rotate(-2 400 500)">
+<rect x="285" y="150" width="230" height="320" rx="18" fill="#fffaf0" filter="url(#g)"/>
+<rect x="303" y="168" width="194" height="284" rx="10" fill="none" stroke="#1f2749" stroke-width="2.5" stroke-dasharray="7 9" opacity=".4"/>
+<path d="M400 268 V352 M358 310 H442" stroke="#1f2749" stroke-width="12" stroke-linecap="round"/>
+<path d="M400 199 Q402.1 209.9 413 212 Q402.1 214.1 400 225 Q397.9 214.1 387 212 Q397.9 209.9 400 199Z" fill="#c19a45" /><path d="M400 395 Q402.1 405.9 413 408 Q402.1 410.1 400 421 Q397.9 410.1 387 408 Q397.9 405.9 400 395Z" fill="#c19a45" />
+</g>
+<g transform="translate(606 372) rotate(32)">
+<rect x="-15" y="-190" width="30" height="26" rx="6" fill="#d98a8c"/>
+<rect x="-15" y="-166" width="30" height="12" fill="#39426f"/>
+<rect x="-15" y="-154" width="30" height="204" fill="#c19a45" filter="url(#g)"/>
+<path d="M-5 -154 V50 M5 -154 V50" stroke="#a37d2c" stroke-width="2"/>
+<path d="M-15 50 H15 L0 92Z" fill="#f8f2e4"/>
+<path d="M-5.4 77 H5.4 L0 92Z" fill="#1f2749"/>
+</g>
+</svg>

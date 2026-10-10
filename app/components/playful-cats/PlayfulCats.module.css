@@ -3,7 +3,7 @@
 
   How to read this file:
   - `.cat` is the clickable button around each cat drawing.
-  - `.spotXxx` classes size each cat and, on wide screens, place it on the page.
+  - `.spotXxx` classes size each cat. `.lounge` lines them up in a row.
   - `.acting` is added for a few seconds after a click; every
     `.acting .something` rule below is one cat's click animation.
 */
@@ -340,64 +340,73 @@
   100% { transform: translateX(0) scaleX(1); }
 }
 
-/* ---------- Layout: small screens (cats sit in rows) ---------- */
+/* ---------- Layout: the cat lounge ---------- */
 
-.cluster {
+/*
+  Every cat sits side by side, feet on the lounge's bottom edge (the "floor").
+  --k scales all the cats at once: each `.spotXxx` width is its full size
+  multiplied by --k.
+*/
+.lounge {
+  --k: 0.82;
+  --row-gap: 2.5rem; /* space between rows of cats: enough for a speech bubble */
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
-  gap: 2.25rem 1.25rem;
-  margin: 2.5rem 0 1.5rem;
+  gap: var(--row-gap) 1.1rem;
+  /* room above the top row for speech bubbles and hops */
+  padding-top: 3.25rem;
+  border-bottom: 1px solid rgba(43, 39, 37, 0.3);
 }
 
-.spotBlack { width: 84px; }
-.spotCalico { width: 140px; }
-.spotTabby { width: 140px; }
-.spotStretch { width: 140px; }
-.spotMouse { width: 46px; }
-.spotYarn { width: 104px; }
-.spotLoaf { width: 150px; }
-.spotBooks { width: 92px; }
-.spotBack { width: 108px; }
-.spotArch { width: 106px; }
+/* An invisible full-width item: it forces the cats after it onto a new row.
+   (The negative margin cancels the extra row gap it would otherwise add.) */
+.rowBreak {
+  flex-basis: 100%;
+  height: 0;
+  margin-top: calc(var(--row-gap) * -1);
+}
+
+.spotBlack { width: calc(74px * var(--k)); }
+.spotCalico { width: calc(120px * var(--k)); }
+.spotTabby { width: calc(122px * var(--k)); }
+.spotStretch { width: calc(122px * var(--k)); }
+.spotMouse { width: calc(40px * var(--k)); }
+.spotYarn { width: calc(90px * var(--k)); }
+.spotLoaf { width: calc(130px * var(--k)); }
+.spotBooks { width: calc(80px * var(--k)); }
+.spotBack { width: calc(94px * var(--k)); }
+.spotArch { width: calc(92px * var(--k)); }
 .spotPlant,
 .spotLeaf { display: none; }
 
-/* ---------- Layout: wide screens (cats roam around the page edges) ---------- */
-
-@media (min-width: 1200px) {
-  /* The group wrappers disappear so each cat is positioned by the page */
-  .cluster { display: contents; }
-
-  .cat,
-  .decor {
-    position: absolute;
-    z-index: 2;
+/* Wide screens: one long row, spread evenly from edge to edge */
+@media (min-width: 1100px) {
+  .lounge {
+    --k: 0.92;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 0;
   }
 
-  /* Left side, top to bottom */
-  .spotBlack { top: 3%; left: 4%; width: clamp(110px, 10vw, 150px); }
-  .spotMouse { top: 19%; left: 11%; width: 58px; }
-  .spotStretch { top: 26%; left: 2%; width: clamp(170px, 14vw, 230px); }
-  .spotLoaf { top: 50%; left: 2%; width: clamp(180px, 15vw, 240px); }
-  .spotLeaf { display: block; top: 71%; left: 9%; width: 64px; }
-  .spotBack { bottom: 3%; left: 4%; width: clamp(130px, 12vw, 180px); }
+  .rowBreak { display: none; }
+}
 
-  /* Right side, top to bottom */
-  .spotCalico { top: 3%; right: 3%; width: clamp(170px, 14vw, 230px); }
-  .spotTabby { top: 22%; right: 2%; width: clamp(170px, 14vw, 230px); }
-  .spotYarn { top: 40%; right: 4%; width: clamp(130px, 11vw, 170px); }
-  .spotPlant { display: block; top: 64%; right: 7%; width: 76px; }
-  .spotArch { bottom: 3%; right: 4%; width: clamp(130px, 12vw, 180px); }
+@media (min-width: 1280px) {
+  .lounge { --k: 1; }
+}
 
-  /* Bottom centre, below the cards */
-  .spotBooks { bottom: 3%; left: calc(50% - 70px); width: 140px; }
+/* Very wide screens have room for the two plants at either end */
+@media (min-width: 1400px) {
+  .spotLeaf { display: block; width: 44px; }
+  .spotPlant { display: block; width: 54px; }
 }
 
 /* ---------- Laser pointer ---------- */
 
-/* Hide the normal cursor everywhere on the page (the red dot replaces it) */
+/* Hide the normal cursor inside the cat lounge (the red dot replaces it there) */
 .laserOn,
 .laserOn * {
   cursor: none !important;
@@ -458,7 +467,7 @@
   transform-origin: 50% 100%;
 }
 
-/* Awake cats run above the cards */
+/* Awake cats run in front of the cats that are resting */
 .noticing,
 .chasing,
 .returning {

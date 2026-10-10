@@ -1,0 +1,274 @@
+/*
+  Project card.
+  Colours come from the homepage's design tokens (the --cream, --navy…
+  variables set on `.page` in app/styles/home.module.css).
+  --accent is set per card from the project's category.
+*/
+
+.card {
+  /* the title link's invisible click layer is positioned against this box */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: var(--paper);
+  color: var(--navy);
+  box-shadow:
+    0 1px 0 rgba(31, 39, 73, 0.04),
+    0 18px 30px -26px rgba(31, 39, 73, 0.4);
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.4s ease,
+    border-color 0.4s ease;
+}
+
+/* ---------- Preview picture ---------- */
+
+/* The picture sits inside the card with a margin around it, like a print in a mount */
+.thumb {
+  position: relative;
+  aspect-ratio: 4 / 3; /* every preview has the same proportions */
+  margin: 10px 10px 0;
+  overflow: hidden;
+  border-radius: 9px;
+  background: var(--cream-deep);
+}
+
+.thumbImage {
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* A thin gold line just inside the picture's edge, like the border of a tarot card */
+.thumb::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.thumbPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent) 22%, var(--cream));
+  color: var(--accent);
+  font-size: 3rem;
+}
+
+.badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--navy);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- Text ---------- */
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.1rem 1.25rem 1.2rem;
+}
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--navy-muted);
+}
+
+.categoryStar {
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.numeral {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--gold-deep);
+}
+
+.title {
+  margin-top: 0.5rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+  outline: none; /* the focus ring is drawn around the whole card instead (below) */
+}
+
+/* The invisible layer that makes the whole card clickable */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 16px;
+}
+
+/* Keyboard focus: a clear ring around the whole card */
+.link:focus-visible::after {
+  outline: 2px solid var(--navy);
+  outline-offset: 4px;
+}
+
+.description {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--navy-muted);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  padding: 0.12rem 0.6rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--navy-muted);
+}
+
+/* "Open prototype →" is pushed to the bottom, so it lines up across a row of cards */
+.open,
+.soon {
+  margin-top: auto;
+  padding-top: 1.1rem;
+  font-size: 0.86rem;
+}
+
+.open {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.soon {
+  font-style: italic;
+  color: var(--navy-muted);
+}
+
+/* ---------- Hover (only cards that actually lead somewhere) ---------- */
+
+.live:hover {
+  transform: translateY(-5px);
+  border-color: var(--hairline-strong);
+  box-shadow:
+    0 1px 0 rgba(31, 39, 73, 0.04),
+    0 30px 40px -28px rgba(31, 39, 73, 0.55);
+}
+
+.live:hover .thumbImage {
+  transform: scale(1.045);
+}
+
+.live:hover .arrow,
+.live:has(.link:focus-visible) .arrow {
+  transform: translateX(5px);
+}
+
+.live:hover .open {
+  color: var(--gold-deep);
+}
+
+/* ---------- A project that isn't built yet ---------- */
+
+.unavailable {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--hairline-strong);
+  box-shadow: none;
+}
+
+.unavailable .thumbImage {
+  opacity: 0.72;
+  filter: saturate(0.8);
+}
+
+.unavailable .title {
+  color: var(--navy-muted);
+}
+
+/* ---------- The large version (Featured Projects) ---------- */
+
+.large .thumb {
+  margin: 12px 12px 0;
+}
+
+.large .body {
+  padding: 1.5rem 1.6rem 1.6rem;
+}
+
+.large .title {
+  font-size: clamp(2rem, 3.4vw, 2.6rem);
+}
+
+.large .description {
+  max-width: 44ch;
+  font-size: 1.02rem;
+}
+
+/* ---------- Respect "reduce motion" system settings ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .thumbImage,
+  .arrow {
+    transition: none;
+  }
+
+  .live:hover,
+  .live:hover .thumbImage,
+  .live:hover .arrow {
+    transform: none;
+  }
+}

@@ -1,121 +1,186 @@
-import styles from './styles/home.module.css';
-import { caveat, instrumentSans } from './fonts';
-import { BottomCats, CatDefs, LaserPointer, TopCats } from './components/playful-cats/PlayfulCats';
-import CatTree, { type TreePrototype } from './components/cat-tree/CatTree';
+/**
+ * The homepage: "Jiaqi's Little Universe", a gallery of prototypes.
+ *
+ * Sections, top to bottom:
+ *   header → hero (with the cat tree) → Featured Projects → All Prototypes
+ *   (with category filters) → About → the cat lounge → footer
+ *
+ * The prototypes themselves are NOT listed in this file. They live in
+ * app/data/projects.ts. Add a prototype there and it shows up here.
+ */
 
-// Accent colours taken from the cats' fur. Each room's name tag gets one for its "ears".
-const accents = ['#f0893d', '#ec8e85', '#aaa99d', '#b8633a', '#6d6d71'];
+import Link from "next/link";
+import styles from "./styles/home.module.css";
+import { caveat, instrumentSans, instrumentSerif } from "./fonts";
+import { catTreeRooms, categories, getCategory, isLive, projects } from "./data/projects";
+import CatTree, { type RoomId, type TreePrototype } from "./components/cat-tree/CatTree";
+import { CatDefs, CatLounge } from "./components/playful-cats/PlayfulCats";
+import { HeroSky, Sparkle } from "./components/celestial/Celestial";
+import FeaturedProjects from "./components/gallery/FeaturedProjects";
+import ProjectGallery from "./components/gallery/ProjectGallery";
+import SectionHeading from "./components/gallery/SectionHeading";
 
 export default function Home() {
-  // Add your prototypes to this array.
-  // Each one lives in a room of the cat tree. The rooms are:
-  //   'perch'   – the bed at the very top
-  //   'bubble'  – the glass bubble (crystal ball)
-  //   'barrel'  – the barrel tunnel
-  //   'house'   – the cube house with the round door
-  //   'hammock' – the U-shaped hammock
-  // A prototype without a room (or in a room that's already taken) is listed
-  // under the tree in "More rooms".
-  const prototypes: Omit<TreePrototype, 'accent'>[] = [
-    {
-      title: 'Getting started',
-      description: 'How to create a prototype',
-      path: '/prototypes/example',
-      room: 'perch'
-    },
-    {
-      title: 'Confetti button',
-      description: 'An interactive button that creates a colorful confetti explosion',
-      path: '/prototypes/confetti-button',
-      room: 'hammock'
-    },
-    {
-      title: 'The Tower',
-      description: 'A curious cat knocks cups off the shelves. Catch every one before it hits the floor!',
-      path: '/prototypes/the-tower',
-      room: 'house'
-    },
-    {
-      title: 'The Magician',
-      description: 'Scroll through typefaces for the word “cat”, then reveal the cat your font summons.',
-      path: '/prototypes/the-magician',
-      room: 'bubble'
-    },
-    {
-      title: 'Wheel of Fortune',
-      description: 'Think of a question, tap the cat, and let its unravelling yarn spell out your answer.',
-      path: '/prototypes/wheel-of-fortune',
-      room: 'barrel'
-    },
-    {
-      title: 'WANT',
-      description: 'A Church of Consumption: five Swiss Style posters about desire, receipts and waste.',
-      path: '/prototypes/want-posters'
-    },
-    {
-      title: 'Typography Experiments',
-      description: 'Type a sentence and push the letters around: mouse repulsion sculpts variable fonts on a ring, a wave and a 3D plane.',
-      path: '/prototypes/typography-experiments'
-    },
-    {
-      title: 'Catnip Fireworks',
-      description: 'Click anywhere to burst hundreds of paw prints and stars. Built with PixiJS particles.',
-      path: '/prototypes/catnip-fireworks'
-    },
-    {
-      title: 'Dream Cat',
-      description: 'Blur, wobble, recolour and light up the tabby with sliders, and ripple it like water. Built with PixiJS filters.',
-      path: '/prototypes/dream-cat'
-    },
-    {
-      title: 'Yarn Toy',
-      description: 'Dangle a ball of yarn on a floppy string and tease the cat paw until it swats. Built with a PixiJS MeshRope.',
-      path: '/prototypes/yarn-toy'
-    },
-    {
-      title: 'Purr Type',
-      description: 'Type a word and watch its letters purr. Scatter them with the mouse. PixiJS SplitText.',
-      path: '/prototypes/purr-type'
-    },
-    {
-      title: 'Cat Spellbook',
-      description: 'Doodle in an enchanted storybook with five magical brushes while the cats watch. p5.js and Tone.js.',
-      path: '/prototypes/cat-spellbook'
-    },
-    // Add your new prototypes here like this:
-    // {
-    //   title: 'Your new prototype',
-    //   description: 'A short description of what this prototype does',
-    //   path: '/prototypes/my-new-prototype',
-    //   room: 'house' // optional
-    // },
-  ];
+  const liveCount = projects.filter(isLive).length;
+  const comingSoonCount = projects.length - liveCount;
+
+  // Fill the rooms of the cat tree from the projects data.
+  // A room whose project is missing or not "live" stays empty (just decoration).
+  const treeRooms: TreePrototype[] = (Object.keys(catTreeRooms) as RoomId[]).flatMap((room) => {
+    const project = projects.find((p) => p.id === catTreeRooms[room]);
+    if (!project || !isLive(project)) return [];
+    return [
+      {
+        title: project.title,
+        description: project.description,
+        path: project.href,
+        room,
+        accent: getCategory(project.category).accent,
+      },
+    ];
+  });
+
+  // Every technology tag used by the projects, each listed once
+  const tools = [...new Set(projects.flatMap((project) => project.tags))];
 
   return (
-    <div className={`${styles.page} ${instrumentSans.className} ${caveat.variable}`}>
+    <div id="top" className={`${styles.page} ${instrumentSans.className} ${caveat.variable} ${instrumentSerif.variable}`}>
+      {/* Lets keyboard users jump straight past the header and the cat tree */}
+      <a href="#prototypes" className={styles.skipLink}>
+        Skip to the prototypes
+      </a>
+
       {/* Shared texture used by every cat drawing */}
       <CatDefs />
 
-      {/* The cursor becomes a laser dot that the cats chase */}
-      <LaserPointer />
+      <header className={`${styles.container} ${styles.header}`}>
+        <Link href="/" className={styles.wordmark}>
+          {/* the same little cat head as the "back home" button on every prototype */}
+          <svg className={styles.wordmarkCat} viewBox="0 0 24 22" aria-hidden="true">
+            <path d="M3 21 C1 15 2 9 3.5 3 L8 7.5 C10.6 6.8 13.4 6.8 16 7.5 L20.5 3 C22 9 23 15 21 21Z" />
+            <circle className={styles.wordmarkEye} cx="8.8" cy="14" r="1.35" />
+            <circle className={styles.wordmarkEye} cx="15.2" cy="14" r="1.35" />
+          </svg>
+          Jiaqi Yuan&rsquo;s prototypes
+        </Link>
+        <nav className={styles.nav} aria-label="Sections of this page">
+          <a href="#prototypes" className={styles.navLink}>
+            Explore
+          </a>
+          <a href="#about" className={styles.navLink}>
+            About
+          </a>
+        </nav>
+      </header>
 
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <h1 className={styles.title}>Jiaqi Yuan&apos;s prototypes</h1>
-          <p className={styles.hint}>psst… the cats like to be clicked</p>
-        </header>
+      <main>
+        {/* ---------- Hero ---------- */}
+        <section className={`${styles.container} ${styles.hero}`} aria-labelledby="hero-title">
+          <div className={styles.heroText}>
+            <p className={styles.eyebrow}>
+              <Sparkle className={styles.eyebrowStar} />
+              Prototype gallery · {liveCount} playable experiments
+            </p>
+            <h1 id="hero-title" className={styles.heroTitle}>
+              <span className={styles.heroLine}>Jiaqi&rsquo;s</span>{" "}
+              <span className={styles.heroLine}>
+                <em className={styles.heroItalic}>Little</em> Universe
+              </span>
+            </h1>
+            <p className={styles.heroLead}>
+              A collection of curious cats, magical interactions, and creative coding experiments.
+            </p>
+            <div className={styles.heroActions}>
+              <a href="#prototypes" className={styles.button}>
+                Explore the prototypes
+                <span className={styles.buttonArrow} aria-hidden="true">
+                  ↓
+                </span>
+              </a>
+              <a href="#about" className={styles.textLink}>
+                About this place
+              </a>
+            </div>
+          </div>
 
-        {/* On small screens these cats show up here, above the cat tree */}
-        <TopCats />
+          {/* The cat tree: a playful shortcut to five prototypes. Every
+              prototype is also a card further down, so it's never the only way in. */}
+          <div className={styles.heroArt}>
+            <div className={styles.heroSky}>
+              <HeroSky />
+            </div>
+            <CatTree prototypes={treeRooms} />
+          </div>
+        </section>
 
-        <main>
-          {/* The prototypes live in the rooms of this rotatable cat tree */}
-          <CatTree prototypes={prototypes.map((p, i) => ({ ...p, accent: accents[i % accents.length] }))} />
-        </main>
+        <div className={`${styles.container} ${styles.rule}`} aria-hidden="true">
+          <Sparkle />
+        </div>
 
-        {/* …and these ones below it */}
-        <BottomCats />
-      </div>
+        {/* ---------- Featured Projects ---------- */}
+        <div className={styles.container}>
+          <FeaturedProjects projects={projects} />
+        </div>
+
+        {/* ---------- All Prototypes ---------- */}
+        <section id="prototypes" className={`${styles.container} ${styles.section}`} aria-labelledby="prototypes-title">
+          <SectionHeading
+            id="prototypes-title"
+            eyebrow="The full deck"
+            title="All Prototypes"
+            note="Everything in one place. Filter by collection, then pick a card to open it."
+          />
+          <ProjectGallery projects={projects} />
+        </section>
+
+        {/* ---------- About ---------- */}
+        <section id="about" className={`${styles.container} ${styles.section} ${styles.about}`} aria-labelledby="about-title">
+          <SectionHeading id="about-title" eyebrow="About" title="A small universe, mostly cats" />
+          <div className={styles.aboutBody}>
+            <p className={styles.aboutLead}>
+              Hi, I&rsquo;m Jiaqi. This is where I keep my prototypes: small, playable sketches that start from a cat, a
+              tarot card, or a question like &ldquo;what if letters could purr?&rdquo;
+            </p>
+            <p className={styles.aboutText}>
+              Each one is an experiment in illustration, type, sound or motion, built quickly to try out an idea. Some
+              are games, some are toys, and a few are just nice to look at. Open one, poke at it, and see what it does.
+            </p>
+            <dl className={styles.facts}>
+              <div className={styles.fact}>
+                <dt className={styles.factLabel}>Prototypes</dt>
+                <dd className={styles.factValue}>
+                  {liveCount} to play with
+                  {comingSoonCount > 0 && `, ${comingSoonCount} in the works`}
+                </dd>
+              </div>
+              <div className={styles.fact}>
+                <dt className={styles.factLabel}>Collections</dt>
+                <dd className={styles.factValue}>{categories.map((category) => category.label).join(", ")}</dd>
+              </div>
+              <div className={styles.fact}>
+                <dt className={styles.factLabel}>Made with</dt>
+                <dd className={styles.factValue}>{tools.join(", ")}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        {/* ---------- The cat lounge ---------- */}
+        {/* The cats have their own strip of the page. Inside it the cursor
+            becomes a laser dot they chase; they can't leave it, so they never
+            cover a card, a button or any text. */}
+        <div className={styles.lounge}>
+          <p className={styles.loungeNote}>psst… the cats like to be clicked</p>
+          <CatLounge />
+        </div>
+      </main>
+
+      <footer className={`${styles.container} ${styles.footer}`}>
+        <p>© {new Date().getFullYear()} Jiaqi Yuan · Made with curiosity, code and cats</p>
+        <a href="#top" className={styles.footerLink}>
+          Back to top <span aria-hidden="true">↑</span>
+        </a>
+      </footer>
     </div>
   );
 }
