@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- The same speckled "printed" texture as the other thumbnails and the homepage cats -->
+    <filter id="g" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.8 0 0 0 -0.42" result="dark"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.8 0 0 -0.42" result="light"/>
+      <feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge>
+      <feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge>
+    </filter>
+    <filter id="gb" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.5 0 0 0 -0.3" result="dark"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.5 0 0 -0.3" result="light"/>
+      <feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge>
+      <feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge>
+    </filter>
+    <radialGradient id="sky" cx="0.45" cy="0.42" r="0.75">
+      <stop offset="0" stop-color="#1b2540"/>
+      <stop offset="1" stop-color="#080d18"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f6dfa8" stop-opacity="0.75"/>
+      <stop offset="0.35" stop-color="#c6a76b" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#c6a76b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- night sky -->
+  <rect width="800" height="600" fill="url(#sky)" filter="url(#gb)"/>
+
+  <!-- the faint coordinate circles of an old star atlas -->
+  <g fill="none" stroke="#c6a76b">
+    <circle cx="400" cy="320" r="150" stroke-opacity="0.16" stroke-width="2"/>
+    <circle cx="400" cy="320" r="260" stroke-opacity="0.12" stroke-width="2" stroke-dasharray="3 12" stroke-linecap="round"/>
+    <circle cx="400" cy="320" r="370" stroke-opacity="0.1" stroke-width="2"/>
+  </g>
+  <path d="M-20 430 Q400 120 820 300" fill="none" stroke="#9386b5" stroke-opacity="0.35" stroke-width="3" stroke-dasharray="12 12"/>
+
+  <!-- the dotted region around the constellation -->
+  <path d="M120 400 Q100 300 220 240 Q330 170 460 220 Q600 140 700 250 Q760 340 640 400 Q520 450 420 400 Q300 470 180 450 Q130 440 120 400Z" fill="#c6a76b" fill-opacity="0.05" stroke="#c6a76b" stroke-opacity="0.5" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round"/>
+
+  <!-- the constellation lines -->
+  <path d="M180 380 L300 280 L430 330 L560 230 L660 330" fill="none" stroke="#c6a76b" stroke-width="3" stroke-opacity="0.85"/>
+  <path d="M300 280 Q370 200 430 330" fill="none" stroke="#9386b5" stroke-width="4" stroke-dasharray="1 11" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- each star's glow -->
+  <circle cx="180" cy="380" r="62" fill="url(#glow)"/>
+  <circle cx="300" cy="280" r="80" fill="url(#glow)"/>
+  <circle cx="430" cy="330" r="58" fill="url(#glow)"/>
+  <circle cx="560" cy="230" r="86" fill="url(#glow)"/>
+  <circle cx="660" cy="330" r="64" fill="url(#glow)"/>
+
+  <!-- the books: small covers floating at their stars -->
+  <g filter="url(#g)">
+    <rect x="160" y="350" width="40" height="60" rx="3" fill="#5a2f3c"/>
+    <rect x="278" y="247" width="44" height="66" rx="3" fill="#2d4a44"/>
+    <rect x="410" y="300" width="40" height="60" rx="3" fill="#d8c47f"/>
+    <rect x="536" y="194" width="48" height="72" rx="3" fill="#4a3a62"/>
+    <rect x="640" y="300" width="40" height="60" rx="3" fill="#a87b2d"/>
+  </g>
+  <g fill="none" stroke="#f1e8d8" stroke-opacity="0.6" stroke-width="1.5">
+    <rect x="164" y="354" width="32" height="52" rx="1.5"/>
+    <rect x="282" y="251" width="36" height="58" rx="1.5"/>
+    <rect x="414" y="304" width="32" height="52" rx="1.5" stroke="#5a4020"/>
+    <rect x="540" y="198" width="40" height="64" rx="1.5"/>
+    <rect x="644" y="304" width="32" height="52" rx="1.5"/>
+  </g>
+  <g fill="#f1e8d8" opacity="0.75">
+    <rect x="170" y="368" width="20" height="3" rx="1.5"/>
+    <rect x="288" y="268" width="24" height="3" rx="1.5"/>
+    <rect x="420" y="318" width="20" height="3" rx="1.5" fill="#5a4020"/>
+    <rect x="547" y="216" width="26" height="3" rx="1.5"/>
+    <rect x="650" y="318" width="20" height="3" rx="1.5"/>
+  </g>
+
+  <!-- four-pointed sparkles: the brightest books, and a few far stars -->
+  <path d="M584 170 Q587 187 604 190 Q587 193 584 210 Q581 193 564 190 Q581 187 584 170Z" fill="#fff4d8"/>
+  <path d="M322 228 Q324.4 241.6 338 244 Q324.4 246.4 322 260 Q319.6 246.4 306 244 Q319.6 241.6 322 228Z" fill="#fff4d8"/>
+  <path d="M120 120 Q122 131 133 133 Q122 135 120 146 Q118 135 107 133 Q118 131 120 120Z" fill="#9386b5"/>
+  <path d="M700 110 Q702.4 123.6 716 126 Q702.4 128.4 700 142 Q697.6 128.4 684 126 Q697.6 123.6 700 110Z" fill="#c6a76b"/>
+  <path d="M410 90 Q411.5 98.5 420 100 Q411.5 101.5 410 110 Q408.5 101.5 400 100 Q408.5 98.5 410 90Z" fill="#f1e8d8"/>
+  <path d="M740 470 Q741.8 479.2 751 481 Q741.8 482.8 740 492 Q738.2 482.8 729 481 Q738.2 479.2 740 470Z" fill="#9386b5"/>
+
+  <!-- tiny stars -->
+  <g fill="#f1e8d8">
+    <circle cx="60" cy="60" r="2.5" opacity="0.8"/><circle cx="230" cy="90" r="2" opacity="0.6"/><circle cx="340" cy="140" r="1.8" opacity="0.7"/>
+    <circle cx="520" cy="80" r="2.2" opacity="0.6"/><circle cx="620" cy="60" r="1.6" opacity="0.8"/><circle cx="760" cy="200" r="2.4" opacity="0.6"/>
+    <circle cx="80" cy="260" r="1.8" opacity="0.7"/><circle cx="40" cy="480" r="2.2" opacity="0.6"/><circle cx="250" cy="540" r="1.8" opacity="0.7"/>
+    <circle cx="480" cy="520" r="2.4" opacity="0.6"/><circle cx="600" cy="560" r="1.6" opacity="0.8"/><circle cx="360" cy="470" r="1.6" opacity="0.6"/>
+    <circle cx="720" cy="400" r="1.8" opacity="0.7"/><circle cx="150" cy="190" r="1.4" opacity="0.6"/><circle cx="470" cy="160" r="1.4" opacity="0.7"/>
+  </g>
+</svg>

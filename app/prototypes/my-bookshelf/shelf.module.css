@@ -1,0 +1,503 @@
+/*
+  A Constellation of Stories — the bookshelf ("Browse").
+
+  A calm editorial grid on the night sky: covers framed in a gold hairline,
+  ivory titles, and each genre's star in its constellation's colour
+  (--accent, set on each card and filter button).
+  Colours come from the variables in styles.module.css.
+*/
+
+.shelf {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 1.5rem auto 0;
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+
+/* ---------- Controls: genre filter, search and sort, sticking to the top while you scroll ---------- */
+
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin: 0 calc(clamp(16px, 4vw, 48px) * -1);
+  padding: 0.85rem clamp(16px, 4vw, 48px);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(10, 16, 28, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.controlsEnd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+}
+
+/* On a narrow screen the row of genres scrolls sideways */
+.filterScroller {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filterScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.filterRow {
+  position: relative;
+  display: inline-flex;
+  gap: 0.15rem;
+  padding: 0.25rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: rgba(241, 232, 216, 0.04);
+}
+
+/*
+  The ivory pill behind the chosen genre. Bookshelf.tsx measures the chosen
+  button and sets --x (its position) and --w (its width), and the pill
+  glides there with a tiny overshoot.
+*/
+.filterHighlight {
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0;
+  width: var(--w, 0);
+  border-radius: 999px;
+  background: var(--ivory);
+  box-shadow: 0 0 20px -6px rgba(241, 232, 216, 0.5);
+  transform: translateX(var(--x, 0));
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.32, 0.5, 1),
+    width 0.5s cubic-bezier(0.34, 1.32, 0.5, 1);
+}
+
+.filterButton {
+  position: relative; /* sits above the pill */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ivory-soft);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    transform 0.15s ease;
+}
+
+.filterButton:hover {
+  color: var(--ivory);
+}
+
+.filterButton:active {
+  transform: scale(0.96);
+}
+
+/* The chosen button. Until the pill has been placed (just after the page loads), it gets its own background. */
+.filterButton[aria-pressed="true"] {
+  background: var(--ivory);
+  color: var(--navy);
+}
+
+.filterRow[data-ready] .filterButton[aria-pressed="true"] {
+  background: transparent;
+}
+
+.filterStar {
+  font-size: 0.7rem;
+  color: var(--accent, var(--gold));
+}
+
+.filterButton[aria-pressed="true"] .filterStar {
+  color: color-mix(in srgb, var(--accent, var(--gold)) 60%, var(--navy));
+}
+
+.filterCount {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.search {
+  position: relative;
+  display: inline-flex;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 13.5rem;
+  padding: 0.45rem 0.8rem 0.45rem 2.1rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: rgba(8, 13, 24, 0.6);
+  color: var(--ivory);
+  font-size: 0.86rem;
+}
+
+.searchInput::placeholder {
+  color: var(--ivory-faint);
+  font-style: italic;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.86rem;
+}
+
+.sortLabel {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.sortSelect {
+  padding: 0.42rem 0.7rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--navy-raised);
+  color: var(--ivory);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* "Constellation II · Science Fiction: 6 books" */
+.summary {
+  margin-top: 1.6rem;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--ivory-soft);
+}
+
+.summaryNumeral {
+  margin-right: 0.35rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.nothing {
+  margin-top: 2rem;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--ivory-faint);
+}
+
+/* ---------- The grid of books ---------- */
+
+/*
+  As many columns as fit, each at least 180px wide. min(100%, 180px) lets a
+  single column shrink on a very narrow screen instead of overflowing.
+*/
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+  gap: clamp(2.25rem, 4vw, 3.5rem) clamp(1.25rem, 2.5vw, 2.25rem);
+  margin-top: 1.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.gridItem {
+  min-width: 0;
+}
+
+/* The first time the shelf appears, books rise in one after another (--i is each book's place in the list) */
+.rise {
+  animation: rise 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 55ms + 120ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.card {
+  position: relative; /* the title's button stretches over the whole card */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/*
+  The cover. --rx / --ry (the tilt) and --gx / --gy (where the shine is)
+  are set by Bookshelf.tsx while the mouse moves over the card, and removed
+  when it leaves, which brings the values back to these defaults.
+*/
+.cardCover {
+  --rx: 0deg;
+  --ry: 0deg;
+  --lift: 0px;
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 3px 6px 6px 3px;
+  background: linear-gradient(160deg, #24304a, #141c2e);
+  box-shadow:
+    0 0 0 1px rgba(241, 232, 216, 0.14),
+    0 18px 28px -16px rgba(0, 0, 0, 0.9);
+  transform: perspective(800px) translateY(var(--lift)) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform 0.6s var(--ease-out),
+    box-shadow 0.6s var(--ease-out),
+    opacity 0.4s ease;
+}
+
+/* While the mouse is over the card: lift, follow the mouse quickly, and glow in the genre's colour */
+.card:hover .cardCover {
+  --lift: -6px;
+  transition-duration: 0.18s, 0.6s;
+  box-shadow:
+    0 0 0 1px rgba(241, 232, 216, 0.3),
+    0 30px 40px -18px rgba(0, 0, 0, 0.9),
+    0 0 40px -8px color-mix(in srgb, var(--accent, var(--gold)) 55%, transparent);
+}
+
+.card:active .cardCover {
+  --lift: -2px;
+  transition-duration: 0.1s;
+}
+
+/* While its page is open, the cover has "flown" there */
+.card[data-open] .cardCover {
+  opacity: 0;
+}
+
+/* A soft fold near the left edge, like the spine of a real book */
+.cardCover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0%, rgba(255, 255, 255, 0.14) 2.5%, rgba(0, 0, 0, 0.06) 5%, transparent 11%);
+  pointer-events: none;
+}
+
+/* The shine that follows the mouse */
+.cardCover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, 0.4), transparent 55%);
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card:hover .cardCover::before {
+  opacity: 1;
+}
+
+/* ---------- The words under each cover ---------- */
+
+.cardText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+.cardGenre {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.cardStar {
+  font-size: 0.72rem;
+  color: var(--accent, var(--gold));
+  text-shadow: 0 0 8px var(--accent, var(--gold));
+}
+
+.cardTitle {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.06;
+  color: var(--ivory);
+}
+
+.cardButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* an underline that fades in on hover */
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.3s ease;
+}
+
+/* Stretch the button over the whole card, so clicking the cover works too */
+.cardButton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.card:hover .cardButton {
+  text-decoration-color: var(--gold);
+}
+
+/* Keyboard focus: ring the cover and underline the title */
+.cardButton:focus-visible {
+  outline: none;
+  text-decoration-color: currentColor;
+}
+
+.card:has(.cardButton:focus-visible) .cardCover {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+}
+
+.cardAuthor {
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-style: italic;
+  color: var(--ivory-soft);
+}
+
+/* "α Telescopii": the book's name as a star, linking the shelf to the map */
+.cardDesignation {
+  margin-top: 0.1rem;
+  font-family: Georgia, serif;
+  font-size: 0.74rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--accent, var(--gold)) 75%, var(--ivory));
+  opacity: 0.8;
+}
+
+/* ---------- Keyboard focus and screen readers ---------- */
+
+.filterButton:focus-visible,
+.sortSelect:focus-visible,
+.searchInput:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Smaller screens ---------- */
+
+@media (max-width: 760px) {
+  .controls {
+    padding-block: 0.7rem;
+  }
+
+  .controlsEnd {
+    width: 100%;
+  }
+
+  .search {
+    flex: 1 1 auto;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+}
+
+/* Phones: two books side by side */
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .cardTitle {
+    font-size: 1.2rem;
+  }
+
+  .cardAuthor {
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------- Less motion, if the visitor asked for it ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+
+  .cardCover,
+  .filterHighlight,
+  .filterButton,
+  .cardButton {
+    transition: none;
+  }
+
+  .card:hover .cardCover {
+    --lift: 0px;
+  }
+}

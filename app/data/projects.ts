@@ -201,6 +201,17 @@ export const projects: Project[] = [
     featured: false,
     status: "live",
   },
+  {
+    id: "my-bookshelf",
+    title: "A Constellation of Stories",
+    description: "My bookstore as a celestial atlas: every book in my Notion database is a star, every genre a constellation.",
+    category: "experiments",
+    tags: ["Notion API", "SVG"],
+    thumbnail: "/thumbnails/my-bookshelf.svg",
+    href: "/prototypes/my-bookshelf",
+    featured: false,
+    status: "live",
+  },
 
   // Add your new prototype here, like this:
   // {
