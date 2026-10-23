@@ -124,6 +124,81 @@ function MissingProperties({ missing, available }: { missing: string[]; availabl
 
 const code = (text: string) => <code className={styles.code}>{text}</code>;
 
+/**
+ * Where this page is running, so the help points to the right place for the
+ * two settings (the token and the database link):
+ *   "vercel"    the published site. Vercel sets VERCEL=1 for every build and
+ *               visit, and the settings live in the project's Environment
+ *               Variables.
+ *   "computer"  `npm run dev` on your own computer, where they live in
+ *               .env.local.
+ */
+type Place = "vercel" | "computer";
+const place: Place = process.env.VERCEL ? "vercel" : "computer";
+
+/** "in .env.local (…) or in Vercel's Environment Variables (…)", the place this page runs in first. */
+function SettingsPlaces() {
+  const local = (
+    <>
+      {code(".env.local")} (on your computer)
+    </>
+  );
+  const vercel = (
+    <>
+      your Vercel project&apos;s <strong>Environment Variables</strong> (for the live site)
+    </>
+  );
+  return place === "vercel" ? (
+    <>
+      {vercel}, or in {local}
+    </>
+  ) : (
+    <>
+      {local}, or in {vercel}
+    </>
+  );
+}
+
+/** The last steps of the setup: where to put the two settings, and how to make the page pick them up. */
+function SettingsSteps() {
+  const onVercel = (
+    <li className={styles.step}>
+      <strong>For the live site on Vercel:</strong> open your project in Vercel, then <strong>Settings</strong> → <strong>Environment Variables</strong>{" "}
+      → <strong>Add Environment Variable</strong>. Add two: in <strong>Key</strong> type the name, {code("NOTION_TOKEN")} (or{" "}
+      {code("NOTION_API_KEY")}), and in <strong>Value</strong> paste the token; then {code("NOTION_DATABASE_ID")} with the database&apos;s link.
+      The Key is only the label; the secret always goes in Value. Save, then redeploy (<strong>Deployments</strong> → the newest one →{" "}
+      <strong>Redeploy</strong>): Vercel only uses new settings in a new build.
+    </li>
+  );
+  const onComputer = (
+    <li className={styles.step}>
+      <strong>On your computer:</strong> open {code(".env.local")} in the project&apos;s top folder (next to {code("package.json")}) and add two
+      lines, pasting straight after each equals sign:
+      <pre className={styles.preBlock}>{"NOTION_TOKEN=paste_the_token_here\nNOTION_DATABASE_ID=paste_the_link_here"}</pre>
+      Save the file and refresh this page. If this message is still here, stop the dev server and start it again.
+    </li>
+  );
+  return place === "vercel" ? (
+    <>
+      {onVercel}
+      {onComputer}
+    </>
+  ) : (
+    <>
+      {onComputer}
+      {onVercel}
+    </>
+  );
+}
+
+/** After fixing a setting: refresh (on your computer) or redeploy (on Vercel). */
+const thenReload =
+  place === "vercel" ? (
+    <> After changing it in Vercel, redeploy the project so the new setting is used.</>
+  ) : (
+    <> Then refresh this page (restart the dev server if nothing changes).</>
+  );
+
 /** What went wrong, and how to fix it, for each problem notion.ts can report. */
 const PROBLEMS: Record<Problem, { title: string; body: ReactNode }> = {
   not_configured: {
@@ -148,12 +223,7 @@ const PROBLEMS: Record<Problem, { title: string; body: ReactNode }> = {
         <li className={styles.step}>
           Copy the database&apos;s link: <strong>•••</strong> → <strong>Copy link</strong>.
         </li>
-        <li className={styles.step}>
-          Open {code(".env.local")} in the project&apos;s top folder (next to {code("package.json")}) and add two lines, pasting straight after
-          each equals sign:
-          <pre className={styles.preBlock}>{"NOTION_TOKEN=paste_the_token_here\nNOTION_DATABASE_ID=paste_the_link_here"}</pre>
-        </li>
-        <li className={styles.step}>Save the file and refresh this page. If this message is still here, stop the dev server and start it again.</li>
+        <SettingsSteps />
       </ol>
     ),
   },
@@ -161,8 +231,8 @@ const PROBLEMS: Record<Problem, { title: string; body: ReactNode }> = {
     title: "That doesn't look like a database link",
     body: (
       <p className={styles.noticeText}>
-        {code("NOTION_DATABASE_ID")} in {code(".env.local")} should be the database&apos;s link (in Notion: <strong>•••</strong> →{" "}
-        <strong>Copy link</strong>) or its 32-character ID. Check that the whole link was pasted.
+        {code("NOTION_DATABASE_ID")}, in <SettingsPlaces />, should be the database&apos;s link (in Notion: <strong>•••</strong> →{" "}
+        <strong>Copy link</strong>) or its 32-character ID. Check that the whole link was pasted.{thenReload}
       </p>
     ),
   },
@@ -170,8 +240,8 @@ const PROBLEMS: Record<Problem, { title: string; body: ReactNode }> = {
     title: "Notion didn't accept the token",
     body: (
       <p className={styles.noticeText}>
-        Check that {code("NOTION_TOKEN")} in {code(".env.local")} was copied completely, with no spaces or quotes. If you refreshed the token in
-        Notion, or it was a personal access token that has expired, paste the new one.
+        Check that {code("NOTION_TOKEN")} (or {code("NOTION_API_KEY")}), in <SettingsPlaces />, was copied completely, with no spaces or quotes. If
+        you refreshed the token in Notion, or it was a personal access token that has expired, paste the new one.{thenReload}
       </p>
     ),
   },
@@ -205,7 +275,14 @@ const PROBLEMS: Record<Problem, { title: string; body: ReactNode }> = {
     title: "Couldn't reach Notion",
     body: (
       <p className={styles.noticeText}>
-        Check your internet connection and refresh. If it keeps happening, the terminal running {code("npm run dev")} shows the exact error.
+        Check your internet connection and refresh. If it keeps happening,{" "}
+        {place === "vercel" ? (
+          <>
+            the project&apos;s <strong>Logs</strong> in Vercel show the exact error.
+          </>
+        ) : (
+          <>the terminal running {code("npm run dev")} shows the exact error.</>
+        )}
       </p>
     ),
   },
@@ -220,13 +297,14 @@ function ProblemCard({ problem, missingSettings }: { problem: Problem; missingSe
       </h2>
       {missingSettings && missingSettings.length > 0 && (
         <p className={styles.noticeText}>
-          Missing from {code(".env.local")}:{" "}
+          Missing {missingSettings.length === 1 ? "setting" : "settings"}:{" "}
           {missingSettings.map((name, index) => (
             <span key={name}>
               {index > 0 && ", "}
               <code className={styles.code}>{name}</code>
             </span>
           ))}
+          . Add {missingSettings.length === 1 ? "it" : "them"} in <SettingsPlaces />.
         </p>
       )}
       {body}

@@ -275,18 +275,36 @@ Notion ──▶ notion.ts (server, uses the token) ──▶ page.tsx ──▶
 ## Publishing (for example on Vercel)
 
 `.env.local` stays on your computer, so a published copy doesn't have your
-token. Add `NOTION_TOKEN` and `NOTION_DATABASE_ID` in your hosting service's
-settings (on Vercel: **Settings → Environment Variables**), then redeploy.
+token. Give the published site the same two settings:
+
+1. In Vercel, open your project, then **Settings → Environment Variables →
+   Add Environment Variable**.
+2. Add two variables. In **Key** type the *name*; in **Value** paste the
+   *secret*. (The Key is only the label on the jar; what's inside goes in
+   Value. A token pasted into Key becomes a visible name and won't work.)
+   - Key `NOTION_TOKEN` (or `NOTION_API_KEY`), Value: your token
+   - Key `NOTION_DATABASE_ID`, Value: the database's link
+   Choose the **Secret** type and keep **Production** selected, then **Save**.
+3. Redeploy: **Deployments** → the newest one → **Redeploy**. Vercel only
+   uses new settings in a new build. Save both variables *before* redeploying,
+   or the build may catch only one of them.
+
+Each Vercel project has its own variables: if your repository is connected
+to several projects, add them to each site that should show your books.
+
+The setup and problem messages on the page know where they're running
+(Vercel sets `VERCEL=1`), so on the live site they point to Vercel's
+Environment Variables first, and on your computer to `.env.local`.
 
 ## Troubleshooting
 
 | What the page says | What to do |
 | --- | --- |
-| "Connect your Notion database" | `.env.local` is missing `NOTION_TOKEN` or `NOTION_DATABASE_ID` (the page says which). Follow the setup steps. |
-| "Notion didn't accept the token" | The token is mistyped, has spaces or quotes around it, was refreshed in Notion, or (for a personal access token) has expired. |
+| "Connect your Notion database" | A setting is missing (the page says which): `NOTION_TOKEN` or `NOTION_DATABASE_ID`. On your computer, add it to `.env.local`; on the live site, to the Vercel project's Environment Variables, then redeploy (see Publishing). |
+| "Notion didn't accept the token" | The token is mistyped, has spaces or quotes around it, was refreshed in Notion, or (for a personal access token) has expired. Fix it where it lives (`.env.local`, or Vercel's Environment Variables plus a redeploy). |
 | "Notion can't find the database" | The database isn't shared with your connection yet (setup step 2), or the link is to a linked copy rather than the database itself. |
 | "The connection isn't allowed to read" | Allow **Read content** on the connection's Configuration tab. |
-| "That doesn't look like a database link" | Paste the full link from **•••** → **Copy link**. |
+| "That doesn't look like a database link" | Paste the full link from **•••** → **Copy link** into `NOTION_DATABASE_ID` (in `.env.local`, or in Vercel's Environment Variables plus a redeploy). |
 | "Heads up: a property wasn't found" | A property name doesn't match. Open the note to see your database's property names, then rename it in Notion, or change `PROPERTY_NAMES` in `notion.ts`. |
 | "The sky is still dark" | The database is connected but has no books yet. Add one in Notion and refresh. |
 | "The sky has clouded over" | Something unexpected broke the page. Press **Try again**; the browser's console shows the error. |
