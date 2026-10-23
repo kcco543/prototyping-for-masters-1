@@ -201,6 +201,17 @@ export const projects: Project[] = [
     featured: false,
     status: "live",
   },
+  {
+    id: "inspiration-library",
+    title: "Inspiration Library",
+    description: "A personal Are.na: sign in, save images and links into boards, and share a board with a link.",
+    category: "experiments",
+    tags: ["Better Auth", "Postgres"],
+    thumbnail: "/thumbnails/inspiration-library.svg",
+    href: "/prototypes/inspiration-library",
+    featured: false,
+    status: "live",
+  },
 
   // Add your new prototype here, like this:
   // {
