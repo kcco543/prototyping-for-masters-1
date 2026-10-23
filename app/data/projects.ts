@@ -169,17 +169,6 @@ export const projects: Project[] = [
     status: "live",
   },
   {
-    id: "want-posters",
-    title: "WANT",
-    description: "A Church of Consumption: five Swiss Style posters about desire, receipts and waste.",
-    category: "experiments",
-    tags: ["CSS"],
-    thumbnail: "/thumbnails/want-posters.svg",
-    href: "/prototypes/want-posters",
-    featured: false,
-    status: "live",
-  },
-  {
     id: "confetti-button",
     title: "Confetti Button",
     description: "An interactive button that sets off a colourful confetti explosion.",
