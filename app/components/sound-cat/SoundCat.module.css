@@ -1,0 +1,177 @@
+/*
+  Sound-Sensitive Cat: the microphone button, its message bubble and the
+  fireworks layer.
+
+  The button and the bubble are positioned against the listening cat's
+  corner (see `.listeningCorner` in PlayfulCats.module.css): the button
+  floats just above the cat's right ear.
+*/
+
+/* ---------- The microphone button ---------- */
+
+.mic {
+  position: absolute;
+  top: -42px;
+  left: calc(100% - 6px);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1.5px solid rgba(43, 39, 37, 0.55);
+  border-radius: 50%;
+  background: #fffaf2;
+  color: #2b2725;
+  box-shadow: 0 6px 14px -8px rgba(43, 39, 37, 0.5);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.mic:hover {
+  transform: translateY(-2px);
+  border-color: #2b2725;
+}
+
+.mic:focus-visible {
+  outline: 2px dashed #2b2725;
+  outline-offset: 4px;
+}
+
+.micIcon {
+  width: 20px;
+  height: 20px;
+  overflow: visible;
+}
+
+.micHead {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.micStand {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* The line through the microphone while it's off */
+.micSlash {
+  stroke: #e8453c;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/*
+  On: the microphone fills with lavender, and a soft ring glows around the
+  button. Its size and strength follow the sound level (--level, from 0 to
+  1), which SoundCat.tsx updates on every frame.
+*/
+.micOn {
+  border-color: #6f61ad;
+  background: #e4def3;
+  color: #4b3f8a;
+}
+
+.micOn .micHead {
+  fill: rgba(143, 130, 196, 0.45);
+}
+
+.micOn::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 calc(2px + var(--level, 0) * 7px) rgba(143, 130, 196, calc(0.18 + var(--level, 0) * 0.35));
+  pointer-events: none;
+}
+
+/* While learning the room's noise, the ring breathes slowly instead */
+.micCalibrating::after {
+  animation: breatheRing 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes breatheRing {
+  from {
+    box-shadow: 0 0 0 2px rgba(143, 130, 196, 0.2);
+  }
+  to {
+    box-shadow: 0 0 0 7px rgba(143, 130, 196, 0.35);
+  }
+}
+
+/* ---------- The message bubble (same look as the cats' speech bubbles) ---------- */
+
+.bubble {
+  position: absolute;
+  top: -58px;
+  left: calc(100% + 36px);
+  z-index: 6;
+  width: max-content;
+  max-width: min(15rem, 70vw);
+  padding: 0.35rem 0.8rem 0.4rem;
+  border-radius: 14px;
+  background: #fffaf2;
+  color: #2b2725;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.15rem;
+  line-height: 1.15;
+  box-shadow: 0 6px 16px -8px rgba(43, 39, 37, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px) scale(0.9);
+  transform-origin: left bottom;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bubbleShown {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* The live numbers, only with ?sound-debug in the address */
+.readout {
+  position: absolute;
+  top: -78px;
+  left: 0;
+  z-index: 6;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(31, 39, 73, 0.85);
+  color: #fffaf2;
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------- The fireworks layer: the whole screen, see-through, never in the way ---------- */
+
+.fireworks {
+  position: fixed;
+  inset: 0;
+  z-index: 900; /* above the page, below the laser dot */
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+/* ---------- Less motion, if the visitor asked for it ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .mic,
+  .bubble {
+    transition: none;
+  }
+
+  .micCalibrating::after {
+    animation: none;
+  }
+}

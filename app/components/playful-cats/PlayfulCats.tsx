@@ -14,11 +14,18 @@
  * 3. The CSS module listens for `.acting` and plays that cat's own animation
  *    (walking, rolling, stretching…). When the timer ends, the class is removed
  *    and the cat goes back to idling.
+ *
+ * The black cat can also hear: switch on the little microphone above it and
+ * it reacts to sound (curious, startled, or magic fireworks after a double
+ * clap). The listening itself lives in ../sound-cat/; this file only draws
+ * the cat's reactions (see "Sound reactions" in the CSS module).
  */
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode, type Ref } from "react";
 import styles from "./PlayfulCats.module.css";
 import { TREE_DRAG_END, TREE_DRAG_START } from "../cat-tree/CatTree";
+import { SoundCat } from "../sound-cat/SoundCat";
+import type { Reaction } from "../sound-cat/detector";
 
 /* ---------- Palette sampled from the illustration ---------- */
 const INK = "#2b2725";
@@ -72,6 +79,37 @@ function headD(cx: number, cy: number, s = 1) {
   ].join(" ");
 }
 
+/**
+ * The same head as headD, cut into three pieces that fit together exactly:
+ * the face, and the two ears. At rest it looks identical, but now the ears
+ * can move on their own (perk up, flatten, twitch).
+ *
+ * Each side of headD runs from the cheek up to an ear tip in one curve.
+ * Here that curve is cut in half: the lower half stays with the face, and
+ * the upper half becomes the ear's outer edge. (The numbers are the original
+ * curve's points, halved with "de Casteljau's" method.) Each ear also reaches
+ * a little way into the face, so no gap shows when it turns.
+ */
+function headParts(cx: number, cy: number, s = 1) {
+  const p = (x: number, y: number) => `${cx + x * s} ${cy + y * s}`;
+  const face = [
+    `M${p(-32, 4)}`,
+    `C${p(-33, -5)} ${p(-33, -13)} ${p(-32.25, -20.5)}`, // left cheek (lower half of the curve)
+    `L${p(-10, -26)}`,
+    `C${p(-3, -28)} ${p(5, -28)} ${p(12, -26)}`, // top of the head, between the ears
+    `L${p(34.125, -19.75)}`,
+    `C${p(34.75, -12)} ${p(34.5, -4)} ${p(33, 4)}`, // right cheek
+    `C${p(30, 24)} ${p(14, 32)} ${p(0, 32)}`,
+    `C${p(-16, 32)} ${p(-30, 22)} ${p(-32, 4)}Z`,
+  ].join(" ");
+  const leftEar = `M${p(-32.25, -20.5)} C${p(-31.5, -28)} ${p(-30, -35)} ${p(-28, -42)} L${p(-10, -26)} L${p(-16, -12)}Z`;
+  const rightEar = `M${p(12, -26)} L${p(30, -42)} C${p(32, -35)} ${p(33.5, -27.5)} ${p(34.125, -19.75)} L${p(18, -12)}Z`;
+  // Each ear turns around the middle of its base
+  const leftPivot = pivot(cx - 21 * s, cy - 23 * s);
+  const rightPivot = pivot(cx + 23 * s, cy - 23 * s);
+  return { face, leftEar, rightEar, leftPivot, rightPivot };
+}
+
 type FaceProps = {
   cx: number;
   cy: number;
@@ -105,8 +143,8 @@ function Face({
     <g className={`${styles.eyes} ${mood === "sleepy" ? styles.eyesOpen : ""}`}>
       {[-1, 1].map((d) => (
         <g key={d} transform={`translate(${cx + d * dx} ${ey}) scale(${s})`}>
-          <path d="M-6.5 0 Q0 -5.8 6.5 0 Q0 5.8 -6.5 0Z" fill={eye} stroke={ink} strokeWidth={1.1} />
-          <ellipse rx={1.3} ry={3.5} fill={ink} />
+          <path className={styles.eyeball} d="M-6.5 0 Q0 -5.8 6.5 0 Q0 5.8 -6.5 0Z" fill={eye} stroke={ink} strokeWidth={1.1} />
+          <ellipse className={styles.pupil} rx={1.3} ry={3.5} fill={ink} />
         </g>
       ))}
     </g>
@@ -193,71 +231,210 @@ type CatProps = {
   faces?: "left" | "right" | "front";
   /** Set to false for anything that shouldn't chase the laser (the mouse!). */
   chaser?: boolean;
+  /** Only for the cat that can hear: how it is reacting to sound right now. */
+  sound?: Reaction;
+  ref?: Ref<HTMLButtonElement>;
   children: ReactNode;
 };
 
-function Cat({ name, action, say, duration, spot, viewBox, blinkDelay = 0, faces = "front", chaser = true, children }: CatProps) {
+/** The class that shows each sound reaction (see "Sound reactions" in the CSS module). */
+const SOUND_CLASS: Record<Reaction, string> = {
+  idle: "",
+  curious: styles.soundCurious,
+  startled: styles.soundStartled,
+  magic: styles.soundMagic,
+};
+
+/** What the cat "says" about a sound. Only shown to people who prefer reduced motion, instead of the movement. */
+const SOUND_SAYS: Record<Reaction, string> = {
+  idle: "",
+  curious: "mrrp?",
+  startled: "hsss!!",
+  magic: "✦ meow ✦",
+};
+
+function Cat({ name, action, say, duration, spot, viewBox, blinkDelay = 0, faces = "front", chaser = true, sound, ref, children }: CatProps) {
   const [acting, setActing] = useState(false);
   const timer = useRef<number | undefined>(undefined);
+  const hearing = !!sound && sound !== "idle";
 
   // Clear the timer if the page is left mid-animation.
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const play = () => {
-    if (acting) return; // let the current action finish first
+    if (acting || hearing) return; // let the current action (or sound reaction) finish first
     setActing(true);
     timer.current = window.setTimeout(() => setActing(false), duration);
   };
 
+  // facing: flipped left/right while chasing; run: the running bounce
+  const figure = (
+    <span className={styles.facing} data-facing="">
+      <span className={styles.run}>
+        <svg viewBox={viewBox} className={styles.catArt} aria-hidden="true">
+          {children}
+        </svg>
+      </span>
+    </span>
+  );
+
   return (
     <button
+      ref={ref}
       type="button"
-      className={`${styles.cat} ${spot} ${acting ? styles.acting : ""}`}
+      className={`${styles.cat} ${spot} ${acting ? styles.acting : ""} ${sound ? SOUND_CLASS[sound] : ""}`}
       onClick={play}
       aria-label={`${name}. Click to make it ${action}.`}
       style={{ "--blink-delay": `${blinkDelay}s` } as CSSProperties}
       data-chase-cat={chaser ? "" : undefined}
       data-faces={faces}
+      // Tells the laser pointer to leave this cat alone while it reacts to a sound
+      data-sound={hearing ? sound : undefined}
     >
-      <span className={styles.bubble} aria-hidden="true">
-        {say}
+      <span className={`${styles.bubble} ${hearing ? styles.soundBubble : ""}`} aria-hidden="true">
+        {hearing ? SOUND_SAYS[sound] : say}
       </span>
-      {/* "!" that pops up when the cat notices the laser */}
+      {/* "!" that pops up when the cat notices the laser (or is startled by a sound) */}
       <span className={styles.alert} aria-hidden="true">
         !
       </span>
-      {/* facing: flipped left/right while chasing; run: the running bounce */}
-      <span className={styles.facing} data-facing="">
-        <span className={styles.run}>
-          <svg viewBox={viewBox} className={styles.catArt} aria-hidden="true">
-            {children}
-          </svg>
+      {sound === undefined ? (
+        figure
+      ) : (
+        // Two extra layers for the cat that can hear: one slides it towards
+        // the microphone and back, the other does its jumps and hops.
+        <span className={styles.soundMove}>
+          <span className={styles.soundJump}>{figure}</span>
         </span>
-      </span>
+      )}
     </button>
   );
 }
 
 /* ---------- The nine cats ---------- */
 
-/** Tall black cat sitting upright, tail curling up behind it. */
-function BlackCat() {
+const BLACK_TAIL = "M80 214 C30 214 14 170 22 132 C28 104 44 92 38 70";
+const BLACK_BODY = "M70 230 C48 196 58 132 96 112 C128 96 164 110 172 150 C180 190 178 214 170 230Z";
+
+/* ---------- Fur standing on end (for the startled black cat) ---------- */
+
+/** One curve from the drawing: start point, two control points, end point. */
+type Curve = [x0: number, y0: number, ax: number, ay: number, bx: number, by: number, x1: number, y1: number];
+
+/**
+ * Walks along curves and returns evenly spread points, each with its
+ * "normal": the direction pointing straight out from the curve.
+ */
+function walk(curves: Curve[], perCurve: number) {
+  const at = ([x0, y0, ax, ay, bx, by, x1, y1]: Curve, t: number) => {
+    const u = 1 - t;
+    return {
+      x: u * u * u * x0 + 3 * u * u * t * ax + 3 * u * t * t * bx + t * t * t * x1,
+      y: u * u * u * y0 + 3 * u * u * t * ay + 3 * u * t * t * by + t * t * t * y1,
+    };
+  };
+  const points: { x: number; y: number; nx: number; ny: number }[] = [];
+  curves.forEach((curve, c) => {
+    for (let i = c === 0 ? 0 : 1; i <= perCurve; i++) {
+      const t = i / perCurve;
+      const here = at(curve, t);
+      const ahead = at(curve, Math.min(1, t + 0.01));
+      const behind = at(curve, Math.max(0, t - 0.01));
+      const dx = ahead.x - behind.x;
+      const dy = ahead.y - behind.y;
+      const length = Math.hypot(dx, dy) || 1;
+      points.push({ ...here, nx: dy / length, ny: -dx / length });
+    }
+  });
+  return points;
+}
+
+const round = (n: number) => Math.round(n * 10) / 10;
+
+/** Tufts of slightly different lengths look hand-drawn rather than like a saw blade. */
+const TUFTS = [11, 8, 13, 9, 12, 7, 10];
+
+/** The black cat's back with its fur standing up: a zig-zag of tufts along the body outline. */
+const BLACK_BODY_FUR = (() => {
+  const points = walk(
+    [
+      [70, 230, 48, 196, 58, 132, 96, 112],
+      [96, 112, 128, 96, 164, 110, 172, 150],
+      [172, 150, 180, 190, 178, 214, 170, 230],
+    ],
+    10,
+  );
+  // every other point sticks out: those are the tips of the tufts
+  const zigzag = points.map((p, i) => {
+    const out = i % 2 ? TUFTS[i % TUFTS.length] : 0;
+    return `${round(p.x + p.nx * out)} ${round(p.y + p.ny * out)}`;
+  });
+  return `M${zigzag.join(" L")}Z`;
+})();
+
+/** The same for the tail: a bottle-brush shape around the tail's centre line. */
+const BLACK_TAIL_FUR = (() => {
+  const points = walk(
+    [
+      [80, 214, 30, 214, 14, 170, 22, 132],
+      [22, 132, 28, 104, 44, 92, 38, 70],
+    ],
+    9,
+  );
+  const side = (direction: 1 | -1) =>
+    points.map((p, i) => {
+      const out = direction * (i % 2 ? 6 + TUFTS[(i + (direction > 0 ? 0 : 3)) % TUFTS.length] : 9); // tufts reach ~17 units from the middle, the dips 9
+      return `${round(p.x + p.nx * out)} ${round(p.y + p.ny * out)}`;
+    });
+  // One more tuft at the very end, pointing the way the tail points
+  const tip = points[points.length - 1];
+  const before = points[points.length - 2];
+  const reach = 14 / Math.hypot(tip.x - before.x, tip.y - before.y);
+  const end = `${round(tip.x + (tip.x - before.x) * reach)} ${round(tip.y + (tip.y - before.y) * reach)}`;
+  return `M${side(1).join(" L")} L${end} L${side(-1).reverse().join(" L")}Z`;
+})();
+
+/**
+ * Tall black cat sitting upright, tail curling up behind it.
+ *
+ * This is the cat that can hear (see ../sound-cat/). Its drawing has a few
+ * extra, normally invisible layers for that: separate ears, a fluffy
+ * outline for its body and tail (shown when it puffs up in fright), and a
+ * star at the tip of its tail (its magic wand).
+ */
+function BlackCat({ sound, ref }: { sound: Reaction; ref?: Ref<HTMLButtonElement> }) {
+  const head = headParts(126, 74, 1.05);
   return (
-    <Cat name="Black cat" action="look around and swish its tail" say="mrrp?" duration={1800} spot={styles.spotBlack} viewBox="0 0 200 240" blinkDelay={1}>
+    <Cat ref={ref} sound={sound} name="Black cat" action="look around and swish its tail" say="mrrp?" duration={1800} spot={styles.spotBlack} viewBox="0 0 200 240" blinkDelay={1}>
       <g className={`${styles.idleTail} ${styles.blackTail}`} style={pivot(80, 214)}>
-        <path d="M80 214 C30 214 14 170 22 132 C28 104 44 92 38 70" stroke={BLACK} strokeWidth={11} fill="none" strokeLinecap="round" />
-      </g>
-      <g filter={GRAIN}>
-        <path d="M70 230 C48 196 58 132 96 112 C128 96 164 110 172 150 C180 190 178 214 170 230Z" fill={BLACK} />
-      </g>
-      <path d="M124 176 C122 196 124 214 125 228 M147 176 C147 196 147 214 147 228" stroke={CREAM} strokeWidth={1.4} fill="none" opacity={0.8} />
-      <Toes x={120} y={230} n={2} gap={5} color={CREAM} />
-      <Toes x={143} y={230} n={2} gap={5} color={CREAM} />
-      <g className={styles.blackHead} style={pivot(126, 104)}>
-        <g filter={GRAIN}>
-          <path d={headD(126, 74, 1.05)} fill={BLACK} />
+        <g className={styles.tailPose} style={pivot(80, 214)}>
+          {/* The tail's fur standing on end: a bushy outline, shown only when startled */}
+          <path className={styles.fluff} d={BLACK_TAIL_FUR} fill={BLACK} strokeLinejoin="round" />
+          <path className={styles.tailStroke} d={BLACK_TAIL} stroke={BLACK} strokeWidth={11} fill="none" strokeLinecap="round" />
+          {/* the tip of the tail is a magic wand */}
+          <path className={styles.wandStar} style={pivot(38, 70)} d="M38 55 Q41 67 53 70 Q41 73 38 85 Q35 73 23 70 Q35 67 38 55Z" fill={GOLD} />
         </g>
-        <Face cx={126} cy={74} s={1.05} eye={AMBER} whisker={CREAM} ink={BLACK} />
+      </g>
+      <g className={styles.blackBody} style={pivot(120, 230)}>
+        <g filter={GRAIN}>
+          {/* ...and the fur on its back */}
+          <path className={styles.fluff} d={BLACK_BODY_FUR} fill={BLACK} />
+          <path d={BLACK_BODY} fill={BLACK} />
+        </g>
+        <path d="M124 176 C122 196 124 214 125 228 M147 176 C147 196 147 214 147 228" stroke={CREAM} strokeWidth={1.4} fill="none" opacity={0.8} />
+        <Toes x={120} y={230} n={2} gap={5} color={CREAM} />
+        <Toes x={143} y={230} n={2} gap={5} color={CREAM} />
+      </g>
+      {/* Two head layers: the outer one moves with sounds, the inner one with clicks */}
+      <g className={styles.soundHead} style={pivot(126, 104)}>
+        <g className={styles.blackHead} style={pivot(126, 104)}>
+          <g filter={GRAIN}>
+            <path className={styles.earLeft} style={head.leftPivot} d={head.leftEar} fill={BLACK} />
+            <path className={styles.earRight} style={head.rightPivot} d={head.rightEar} fill={BLACK} />
+            <path d={head.face} fill={BLACK} />
+          </g>
+          <Face cx={126} cy={74} s={1.05} eye={AMBER} whisker={CREAM} ink={BLACK} />
+        </g>
       </g>
     </Cat>
   );
@@ -707,11 +884,20 @@ export function CatDefs() {
  * of) the rest of the page.
  */
 export function CatLounge() {
+  // The black cat can hear: its microphone button sits right above it
+  const [sound, setSound] = useState<Reaction>("idle");
+  const blackCat = useRef<HTMLButtonElement>(null);
+  // While the black cat is busy with its click animation, new sound reactions wait
+  const blackCatBusy = useCallback(() => !!blackCat.current?.classList.contains(styles.acting), []);
+
   return (
     <div className={styles.lounge}>
       <LaserPointer />
       <Leaf className={styles.spotLeaf} />
-      <BlackCat />
+      <span className={styles.listeningCorner}>
+        <BlackCat ref={blackCat} sound={sound} />
+        <SoundCat cat={blackCat} isBusy={blackCatBusy} onReaction={setSound} />
+      </span>
       <CalicoCat />
       <TabbyCat />
       <StretchCat />
@@ -763,6 +949,8 @@ const rand = (a: number, b: number) => a + Math.random() * (b - a);
  *   walks back to its own spot.
  * - While you're dragging the cat tree to spin it, the cats ignore the dot
  *   (anyone already chasing it heads home) and pick up again after you let go.
+ * - Sounds come first: while the black cat is reacting to a sound (see
+ *   ../sound-cat/), it ignores the dot too, and picks up again afterwards.
  * - The laser only exists inside the element this component is placed in
  *   (its "host", the cat lounge). Outside it you get your normal cursor back,
  *   and a chasing cat is never allowed to leave the host's box.
@@ -875,6 +1063,7 @@ export function LaserPointer() {
         const busy = cats.some((c) => c.mode !== "home");
         const candidates = cats.filter((c) => {
           if (c.mode !== "home" || now < c.restUntil || c.el.classList.contains(styles.acting)) return false;
+          if (c.el.dataset.sound) return false; // busy reacting to a sound
           if (c.el.matches(":hover")) return false; // you're pointing at it (maybe about to click): leave it be
           const r = c.el.getBoundingClientRect();
           return r.bottom > 0 && r.top < window.innerHeight; // only cats you can see
@@ -897,8 +1086,9 @@ export function LaserPointer() {
       for (const c of cats) {
         if (c.mode === "home") continue;
 
-        if (treeDragging && (c.mode === "notice" || c.mode === "chase")) {
-          setMode(c, "return"); // the tree is being spun: lose interest and head home
+        // The tree is being spun, or a sound needs this cat's attention: lose interest and head home
+        if ((treeDragging || c.el.dataset.sound) && (c.mode === "notice" || c.mode === "chase")) {
+          setMode(c, "return");
         } else if (c.mode === "notice" && now > c.until) {
           setMode(c, "chase");
           c.until = now + rand(3500, 8500); // how long it stays interested
