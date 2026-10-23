@@ -111,7 +111,16 @@ export function Bookshelf({ books, catalogue, genre, onGenre, openId, onOpenBook
           </label>
           <label className={styles.sort}>
             <span className={styles.sortLabel}>Sort</span>
-            <select className={styles.sortSelect} value={order} onChange={(event) => smoothly(() => setOrder(event.target.value as Order))}>
+            <select
+              className={styles.sortSelect}
+              value={order}
+              onChange={(event) => {
+                // Read the choice now. smoothly() runs its change a moment later (after the browser's
+                // "before" snapshot), and by then React has already put the menu back to the old value.
+                const next = event.target.value as Order;
+                smoothly(() => setOrder(next));
+              }}
+            >
               {(Object.keys(ORDERS) as Order[]).map((key) => (
                 <option key={key} value={key}>
                   {ORDERS[key]}
