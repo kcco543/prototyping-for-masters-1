@@ -19,6 +19,7 @@ import { HeroSky, Sparkle } from "./components/celestial/Celestial";
 import FeaturedProjects from "./components/gallery/FeaturedProjects";
 import ProjectGallery from "./components/gallery/ProjectGallery";
 import SectionHeading from "./components/gallery/SectionHeading";
+import HomeAtmosphere from "./components/atmosphere/HomeAtmosphere";
 
 export default function Home() {
   const liveCount = projects.filter(isLive).length;
@@ -49,6 +50,9 @@ export default function Home() {
       <a href="#prototypes" className={styles.skipLink}>
         Skip to the prototypes
       </a>
+
+      {/* The living background: a slowly moving colour field and the cursor's soft light (behind everything) */}
+      <HomeAtmosphere />
 
       {/* Shared texture used by every cat drawing */}
       <CatDefs />
@@ -114,7 +118,7 @@ export default function Home() {
         </section>
 
         <div className={`${styles.container} ${styles.rule}`} aria-hidden="true">
-          <Sparkle />
+          <Sparkle className={styles.ruleStar} />
         </div>
 
         {/* ---------- Featured Projects ---------- */}

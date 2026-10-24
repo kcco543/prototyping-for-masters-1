@@ -47,9 +47,59 @@
   fill: var(--gold);
 }
 
-/* Each star twinkles very slowly, a little out of step with the others */
+/* Each star twinkles very slowly, a little out of step with the others, and drifts in a small loop */
 .star {
-  animation: twinkle 5.5s ease-in-out infinite;
+  animation:
+    twinkle 5.5s ease-in-out infinite,
+    drift 18s ease-in-out infinite;
+}
+
+/*
+  `translate` (not `transform`), so the drift adds to each star's own
+  position, which is set by its transform attribute.
+*/
+@keyframes drift {
+  0%, 100% { translate: 0 0; }
+  25% { translate: 6px -5px; }
+  50% { translate: 2px -9px; }
+  75% { translate: -5px -3px; }
+}
+
+/* ---------- Depth: the sky leans with the cursor (--pointer-x/y from HomeAtmosphere) ---------- */
+
+.haloLayer,
+.moonLayer,
+.starLayer {
+  transition: translate 0.2s linear;
+}
+
+.haloLayer {
+  translate: calc(var(--pointer-x, 0) * -4px) calc(var(--pointer-y, 0) * -3px);
+}
+
+.moonLayer {
+  translate: calc(var(--pointer-x, 0) * 8px) calc(var(--pointer-y, 0) * 6px);
+}
+
+.starLayer {
+  translate: calc(var(--pointer-x, 0) * 18px) calc(var(--pointer-y, 0) * 14px);
+}
+
+/*
+  The halo slowly changes shape: wider, then taller, then round again
+  (scaled about the moon's centre), like Prompt Bond's blobs.
+*/
+.halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0.55;
+  animation: haloMorph 16s ease-in-out infinite;
+}
+
+@keyframes haloMorph {
+  0%, 100% { scale: 1 1; }
+  33% { scale: 1.05 0.97; }
+  66% { scale: 0.97 1.06; }
 }
 
 .gold {
@@ -70,7 +120,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .star {
+  .star,
+  .halo {
     animation: none;
+  }
+
+  .haloLayer,
+  .moonLayer,
+  .starLayer {
+    translate: none;
+    transition: none;
   }
 }

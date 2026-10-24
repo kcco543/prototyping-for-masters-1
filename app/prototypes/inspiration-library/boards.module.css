@@ -1,0 +1,415 @@
+/*
+  A board's page: its header, the owner's tools, and the items in a
+  masonry grid. The colours (var(--ink) and so on) come from .page in
+  styles.module.css, which wraps every page of the prototype.
+*/
+
+/* ---------- Header ---------- */
+
+.boardHeader {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.backLink {
+  justify-self: start;
+  color: var(--muted);
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--ink);
+}
+
+.boardTitle {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.boardDescription {
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.6;
+  white-space: pre-line; /* keep the line breaks you typed */
+}
+
+.boardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.metaNote {
+  font-size: 0.86rem;
+}
+
+/* ---------- The owner's tools ---------- */
+
+.ownerTools {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 2.5rem;
+}
+
+.addPanel,
+.settingsPanel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.addPanel {
+  padding: 1.25rem;
+}
+
+.panelTitle {
+  margin-bottom: 1rem;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+/* <details>: "Edit board" opens to show the form */
+.settingsSummary {
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settingsSummary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius);
+}
+
+.settingsBody {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.dangerZone {
+  display: grid;
+  justify-items: start;
+  gap: 0.6rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.dangerText {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* ---------- The masonry grid ----------
+   CSS columns do the masonry: items flow down the first column, then the
+   next, each keeping its own height. `columns: 240px` means "as many columns
+   as fit, each at least 240px wide", so phones get one or two columns. */
+
+.masonry {
+  columns: 240px;
+  column-gap: 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.masonryItem {
+  margin-bottom: 1.1rem;
+  break-inside: avoid; /* never split a card between two columns */
+}
+
+.itemCard {
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.itemImageLink {
+  display: block;
+  background: #e9e3d6;
+}
+
+.itemImageLink:focus-visible,
+.itemLinkOnly:focus-visible,
+.itemSite:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.itemImage {
+  width: 100%;
+  height: auto;
+  transition: opacity 0.2s ease;
+}
+
+.itemImageLink:hover .itemImage {
+  opacity: 0.88;
+}
+
+.itemImageBroken {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* A link with no picture: a typographic card */
+.itemLinkOnly {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 130px;
+  padding: 1rem;
+  color: var(--ink);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, rgba(31, 28, 24, 0.06) 23px 24px),
+    var(--accent-soft);
+  text-decoration: none;
+}
+
+.itemLinkOnlySite {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.itemLinkOnlyArrow {
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.itemBody {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem 1rem;
+}
+
+.itemTitle {
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.itemNote {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.itemSite {
+  justify-self: start;
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.itemSite:hover {
+  text-decoration: underline;
+}
+
+/* The owner's "Edit" on each card */
+.itemTools {
+  border-top: 1px solid var(--line);
+}
+
+.itemToolsSummary {
+  padding: 0.55rem 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.itemToolsSummary:hover {
+  color: var(--ink);
+}
+
+.itemToolsSummary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.itemToolsBody {
+  display: grid;
+  gap: 1rem;
+  padding: 0.25rem 1rem 1rem;
+}
+
+/* For signed-out visitors of a public board */
+.visitorNote {
+  margin-top: 3rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- Smaller screens ---------- */
+
+@media (max-width: 860px) {
+  .ownerTools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .masonry {
+    columns: 2;
+    column-gap: 0.75rem;
+  }
+
+  .masonryItem {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .itemImage {
+    transition: none;
+  }
+}
+
+/* ---------- Newest first / By colour ---------- */
+
+.viewSwitch {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 1.1rem;
+  padding: 0.25rem;
+  background: rgba(31, 28, 24, 0.06);
+  border-radius: 999px;
+}
+
+.viewOption,
+.viewOptionActive {
+  padding: 0.4rem 0.95rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.viewOption {
+  color: var(--muted);
+}
+
+.viewOption:hover {
+  color: var(--ink);
+}
+
+.viewOptionActive {
+  color: var(--ink);
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(31, 28, 24, 0.12);
+}
+
+.viewOption:focus-visible,
+.viewOptionActive:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The board's palette, as one blended strip */
+.gradientBar {
+  height: 28px;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(31, 28, 24, 0.08);
+}
+
+/* Square tiles in rows, left to right, so the order reads as a gradient
+   (the masonry columns would read top to bottom instead). */
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.colorTile {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: 6px;
+}
+
+.colorTileLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.colorTileLink:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.itemImageFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.colorTileText {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* The hex code, shown when you point at (or tab to) a tile */
+.colorTileHex {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 0.1rem 0.35rem;
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.colorTileLink:hover .colorTileHex,
+.colorTileLink:focus-visible .colorTileHex {
+  opacity: 1;
+}
+
+.colorNote {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}

@@ -34,6 +34,9 @@ export default function ProjectCard({ project, size = "regular" }: Props) {
     <article
       className={`${s.card} ${large ? s.large : ""} ${live ? s.live : s.unavailable}`}
       style={{ "--accent": category.accent } as CSSProperties}
+      // Lets the homepage's atmosphere (app/components/atmosphere) tell this card
+      // how near the cursor is (--near), so it can glow as the cursor approaches.
+      data-proximity={live ? "" : undefined}
     >
       <div className={s.thumb}>
         {project.thumbnail ? (

@@ -21,7 +21,45 @@
   transition:
     transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
     box-shadow 0.4s ease,
-    border-color 0.4s ease;
+    border-color 0.4s ease,
+    border-radius 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/*
+  ---------- The cursor's presence (from the homepage's atmosphere) ----------
+  --near goes from 0 (cursor far away) to 1 (cursor on the card), easing
+  smoothly as it approaches. The card answers with a soft glow in its
+  collection's colour; its star and numeral catch the light. Without a
+  mouse, or with reduced motion, --near simply stays 0.
+*/
+.live {
+  box-shadow:
+    0 1px 0 rgba(31, 39, 73, 0.04),
+    0 18px 30px -26px rgba(31, 39, 73, 0.4),
+    0 0 calc(var(--near, 0) * 34px) calc(var(--near, 0) * -6px) color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* A soft highlight that follows the cursor across the card (--mx/--my), like light on paper */
+.live::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle 220px at var(--mx, 50%) var(--my, 30%),
+    rgba(255, 249, 232, 0.5),
+    color-mix(in srgb, var(--accent) 12%, transparent) 50%,
+    transparent 75%
+  );
+  mix-blend-mode: soft-light;
+  transition: opacity 0.4s ease;
+}
+
+.live:hover::before {
+  opacity: 1;
 }
 
 /* ---------- Preview picture ---------- */
@@ -107,6 +145,10 @@
 .categoryStar {
   color: var(--accent);
   font-size: 0.85rem;
+  /* turns and brightens as the cursor comes near */
+  rotate: calc(var(--near, 0) * 45deg);
+  scale: calc(1 + var(--near, 0) * 0.25);
+  filter: drop-shadow(0 0 calc(var(--near, 0) * 5px) var(--accent));
 }
 
 .numeral {
@@ -115,6 +157,8 @@
   font-style: italic;
   letter-spacing: 0.04em;
   color: var(--gold-deep);
+  /* a gold glint as the cursor comes near */
+  text-shadow: 0 0 calc(var(--near, 0) * 8px) rgba(193, 154, 69, 0.6);
 }
 
 .title {
@@ -202,9 +246,12 @@
 .live:hover {
   transform: translateY(-5px);
   border-color: var(--hairline-strong);
+  /* the corners soften a little, unevenly, like paper lifting from a table */
+  border-radius: 20px 18px 22px 17px;
   box-shadow:
     0 1px 0 rgba(31, 39, 73, 0.04),
-    0 30px 40px -28px rgba(31, 39, 73, 0.55);
+    0 30px 40px -28px rgba(31, 39, 73, 0.55),
+    0 0 34px -6px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
 .live:hover .thumbImage {
@@ -262,7 +309,8 @@
 @media (prefers-reduced-motion: reduce) {
   .card,
   .thumbImage,
-  .arrow {
+  .arrow,
+  .live::before {
     transition: none;
   }
 

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="sky" cx="50%" cy="15%" r="90%">
+      <stop offset="0" stop-color="#2a1d4a"/>
+      <stop offset=".6" stop-color="#09070f"/>
+    </radialGradient>
+    <radialGradient id="stock" cx="50%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#231a3a"/>
+      <stop offset="1" stop-color="#120d20"/>
+    </radialGradient>
+    <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8d701e"/>
+      <stop offset=".45" stop-color="#fbeea4"/>
+      <stop offset="1" stop-color="#d4af37"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#sky)"/>
+  <circle cx="200" cy="150" r="138" fill="none" stroke="#d4af37" stroke-opacity=".14"/>
+  <g fill="url(#stock)" stroke="url(#foil)" stroke-width="1.4">
+    <rect x="78" y="78" width="78" height="126" rx="7" transform="rotate(-8 117 141)"/>
+    <rect x="161" y="66" width="78" height="126" rx="7"/>
+    <rect x="244" y="78" width="78" height="126" rx="7" transform="rotate(8 283 141)"/>
+  </g>
+  <g fill="none" stroke="#d4af37" stroke-opacity=".5" stroke-width=".8">
+    <rect x="167" y="72" width="66" height="114" rx="5"/>
+    <circle cx="200" cy="129" r="22"/>
+  </g>
+  <path d="M200 112l4 13 13 4-13 4-4 13-4-13-13-4 13-4z" fill="#fbeea4"/>
+  <text x="200" y="250" text-anchor="middle" font-family="Georgia, serif" font-size="14" letter-spacing="4" fill="#d4af37">PAST · PRESENT · FUTURE</text>
+</svg>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- The same speckled "printed" texture as the other thumbnails and the homepage cats -->
+    <filter id="g" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.8 0 0 0 -0.42" result="dark"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.8 0 0 -0.42" result="light"/>
+      <feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge>
+      <feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge>
+    </filter>
+    <filter id="gb" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.5 0 0 0 -0.3" result="dark"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0.5 0 0 -0.3" result="light"/>
+      <feMerge result="specks"><feMergeNode in="dark"/><feMergeNode in="light"/></feMerge>
+      <feComposite in="specks" in2="SourceAlpha" operator="in" result="clipped"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="clipped"/></feMerge>
+    </filter>
+    <linearGradient id="rose" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#f4a6b8"/>
+      <stop offset="1" stop-color="#e8577a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.7" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#fff3c4"/>
+      <stop offset="0.55" stop-color="#f2b544"/>
+      <stop offset="1" stop-color="#d4532f"/>
+    </radialGradient>
+    <linearGradient id="moss" x1="0.8" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="#9fb48a"/>
+      <stop offset="0.6" stop-color="#4f6b45"/>
+      <stop offset="1" stop-color="#a8643f"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9c8e8"/>
+      <stop offset="1" stop-color="#4d7fb8"/>
+    </linearGradient>
+  </defs>
+  <!-- warm paper -->
+  <rect width="800" height="600" fill="#f5f1e8" filter="url(#gb)"/>
+  <!-- a board in miniature: four columns of saved pictures and links (masonry) -->
+  <g filter="url(#g)">
+    <!-- column 1 -->
+    <rect x="70" y="-30" width="150" height="230" rx="16" fill="url(#rose)"/>
+    <rect x="70" y="222" width="150" height="150" rx="16" fill="#2a2723"/>
+    <circle cx="125" cy="282" r="30" fill="#f5f1e8"/>
+    <rect x="70" y="394" width="150" height="240" rx="16" fill="url(#sky)"/>
+    <!-- column 2 -->
+    <rect x="240" y="40" width="150" height="150" rx="16" fill="#f7e1d7"/>
+    <rect x="240" y="212" width="150" height="260" rx="16" fill="url(#moss)"/>
+    <rect x="240" y="494" width="150" height="140" rx="16" fill="url(#sun)"/>
+    <!-- column 3 -->
+    <rect x="410" y="-10" width="150" height="180" rx="16" fill="url(#sun)"/>
+    <rect x="410" y="192" width="150" height="170" rx="16" fill="#ece4d3"/>
+    <rect x="410" y="384" width="150" height="250" rx="16" fill="url(#rose)"/>
+    <!-- column 4 -->
+    <rect x="580" y="60" width="150" height="250" rx="16" fill="url(#sky)"/>
+    <rect x="580" y="332" width="150" height="140" rx="16" fill="#f7e1d7"/>
+    <rect x="580" y="494" width="150" height="140" rx="16" fill="url(#moss)"/>
+  </g>
+  <!-- stripes on the sky pictures, like the landing page's "Packaging" pin -->
+  <g fill="#ffffff" fill-opacity="0.22">
+    <rect x="600" y="60" width="8" height="250"/><rect x="630" y="60" width="8" height="250"/><rect x="660" y="60" width="8" height="250"/><rect x="690" y="60" width="8" height="250"/>
+    <rect x="90" y="394" width="8" height="206"/><rect x="120" y="394" width="8" height="206"/><rect x="150" y="394" width="8" height="206"/><rect x="180" y="394" width="8" height="206"/>
+  </g>
+  <!-- link cards: a website name in serif, with an arrow -->
+  <g fill="#1f1c18" font-family="Georgia, 'Times New Roman', serif">
+    <text x="258" y="160" font-size="34">are.na</text>
+    <text x="598" y="452" font-size="30" font-style="italic">specimen</text>
+  </g>
+  <g fill="#d4532f" font-family="Georgia, serif" font-size="30">
+    <text x="352" y="76">↗</text>
+    <text x="694" y="368">↗</text>
+  </g>
+  <!-- ruled lines on the paper-texture picture -->
+  <g stroke="#1f1c18" stroke-opacity="0.12" stroke-width="2">
+    <line x1="430" y1="230" x2="540" y2="230"/><line x1="430" y1="258" x2="540" y2="258"/><line x1="430" y1="286" x2="540" y2="286"/><line x1="430" y1="314" x2="510" y2="314"/>
+  </g>
+  <!-- a little "Public" pill on one card -->
+  <rect x="254" y="430" width="78" height="28" rx="14" fill="#fffdf8" fill-opacity="0.92"/>
+  <text x="293" y="449" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#2f6b4f">Public</text>
+</svg>
