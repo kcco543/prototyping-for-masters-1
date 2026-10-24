@@ -1,4 +1,4 @@
-import { Caveat, Instrument_Sans, Instrument_Serif } from 'next/font/google';
+import { Caveat, Cinzel, Instrument_Sans, Instrument_Serif } from 'next/font/google';
 
 // Editorial serif for the homepage's big headlines and card titles.
 // It is the serif companion of Instrument Sans, so the two sit well together.
@@ -23,4 +23,10 @@ export const caveat = Caveat({
   display: 'swap',
   weight: ['500', '700'],
   variable: '--font-hand',
+});
+
+// Classical serif used by the "A Reading for Yourself" prototype.
+export const cinzel = Cinzel({
+  subsets: ['latin'],
+  display: 'swap',
 });

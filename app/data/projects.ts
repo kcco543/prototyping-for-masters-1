@@ -213,6 +213,17 @@ export const projects: Project[] = [
     status: "live",
   },
   {
+    id: "a-reading-for-yourself",
+    title: "A Reading for Yourself",
+    description: "A three-card tarot spread for makers: turn over your Past, Present and Future, printed in gold foil.",
+    category: "tarot",
+    tags: ["React", "Canvas", "3D CSS"],
+    thumbnail: "/thumbnails/a-reading-for-yourself.svg",
+    href: "/prototypes/a-reading-for-yourself",
+    featured: false,
+    status: "live",
+  },
+  {
     id: "grain-light-card",
     title: "Grain Light Card",
     description: "A holographic tarot card, The Fool, whose engraved lines flash with rainbow light as you tilt it.",
