@@ -1,0 +1,76 @@
+/*
+  The homepage's atmosphere (HomeAtmosphere.tsx). Colours come from the
+  homepage's design tokens on `.page` (app/styles/home.module.css).
+
+  It's fixed behind the whole page (z-index -1), so it covers the viewport
+  while the page scrolls over it, and it can never be clicked.
+*/
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--cream);
+}
+
+/*
+  1. The still field: cream, with lavender light pooled at the top right
+  (behind the moon), blush at the bottom left and a breath of gold. It's
+  what everyone sees first, and all they see without WebGL or with reduced
+  motion, so it's a finished picture on its own.
+*/
+.still {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 78% 18%, rgba(228, 222, 243, 0.95), transparent 70%),
+    radial-gradient(ellipse 55% 50% at 12% 82%, rgba(246, 220, 214, 0.75), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 40% 45%, rgba(193, 154, 69, 0.08), transparent 70%),
+    var(--cream);
+}
+
+/*
+  2. The moving field. It fades in slowly once it has settled (the first
+  frames of a shader can flicker), and leans a few pixels with the cursor.
+  It's drawn a little larger than the window, so leaning never shows an edge.
+*/
+.field {
+  position: absolute;
+  inset: -3%;
+  opacity: 0;
+  animation: fieldIn 2.4s ease-out 0.8s forwards;
+  transform: translate3d(calc(var(--pointer-x, 0) * -14px), calc(var(--pointer-y, 0) * -10px), 0);
+}
+
+@keyframes fieldIn {
+  to {
+    opacity: 0.7;
+  }
+}
+
+/*
+  3. A soft pool of warm light that follows the cursor, like a candle
+  carried through the room. Very faint, and gone when the cursor leaves.
+*/
+.glow {
+  position: absolute;
+  inset: 0;
+  opacity: calc(var(--glow-on, 0) * 0.55);
+  background: radial-gradient(
+    circle 280px at var(--glow-x, 50%) var(--glow-y, 30%),
+    rgba(255, 246, 222, 0.85),
+    rgba(228, 222, 243, 0.35) 45%,
+    transparent 75%
+  );
+  mix-blend-mode: soft-light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field {
+    animation: none;
+    opacity: 0.7;
+    transform: none;
+  }
+}

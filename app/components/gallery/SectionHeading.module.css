@@ -23,6 +23,27 @@
 .eyebrowStar {
   color: var(--gold);
   font-size: 0.9rem;
+  /* breathes and turns very slowly, like the stars in the hero */
+  animation: starBreathe 6.5s ease-in-out infinite;
+}
+
+@keyframes starBreathe {
+  0%, 100% {
+    scale: 1;
+    rotate: 0deg;
+    opacity: 1;
+  }
+  50% {
+    scale: 1.18;
+    rotate: 12deg;
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyebrowStar {
+    animation: none;
+  }
 }
 
 .title {
