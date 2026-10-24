@@ -1,0 +1,246 @@
+/*
+  Grain Light Card prototype.
+
+  The card brings its own styles (inside components/ui/grain-light-card.tsx).
+  This file styles the page and the demo's control panel. The demo was written
+  with Tailwind CSS classes; each class below replaces one of those, with the
+  same spacing, sizes and colours, so the panel looks the way it was designed.
+
+  THE PALETTE: the colours the demo expected from shadcn's theme
+  (background, foreground, muted, border, ring) are defined here as CSS
+  variables on .demo, so they only apply inside this prototype.
+*/
+
+.page {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* The "back home" button, floating over the top-left of the stage */
+.backHome {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+}
+
+/* ---------- The demo (was: flex h-full min-h-[600px] w-full flex-col …) ---------- */
+
+.demo {
+  --background: #ffffff;
+  --foreground: #17162a;
+  --muted: #f1f1f4;
+  --muted-foreground: #6b6a7b;
+  --border: #e4e4ea;
+  --ring: #8e8bff;
+  --primary: #17162a;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  overflow: hidden;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Where the card sits; its background changes with the Light / Dark theme */
+.stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 1.5rem;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* ---------- The control panel ---------- */
+
+.controls {
+  flex-shrink: 0;
+  max-height: 60vh;
+  padding: 0.75rem 1rem;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+}
+
+.controlsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.controlsTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.controlsSubtitle {
+  margin-left: 0.5rem;
+  color: var(--muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.toggleButton {
+  padding: 0.375rem 0.625rem;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.toggleButton:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* One column on phones, three side by side from 768px */
+.controlsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .controlsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* A group of controls: "Preview", "Appearance", "Motion" */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.groupTitle {
+  margin: 0 0 0.125rem;
+  padding-bottom: 0.375rem;
+  color: var(--muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+/* A label and its control on one line */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rowLabel,
+.sliderLabel {
+  flex-shrink: 0;
+  width: 5rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+/* "Front | Back" and "Light | Dark": a row of buttons, the chosen one raised */
+.segmented {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.125rem;
+  background: var(--muted);
+  border-radius: 0.5rem;
+}
+
+.segButton {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: transparent;
+  border: 0;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.segButton:hover,
+.toggleButton:hover {
+  color: var(--foreground);
+}
+
+.segButton[aria-pressed="true"] {
+  color: var(--foreground);
+  background: var(--background);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.segButton:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* The little colour dot in "Light" and "Dark" */
+.swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+/* A slider: label, track, and its value */
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.sliderLabel {
+  color: inherit;
+}
+
+.sliderInput {
+  flex: 1;
+  width: 8rem;
+  max-width: 180px;
+  accent-color: var(--primary);
+}
+
+.sliderValue {
+  width: 2.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding-left: 5.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.checkbox {
+  accent-color: var(--primary);
+}

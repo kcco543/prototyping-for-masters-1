@@ -212,6 +212,17 @@ export const projects: Project[] = [
     featured: false,
     status: "live",
   },
+  {
+    id: "grain-light-card",
+    title: "Grain Light Card",
+    description: "A holographic tarot card, The Fool, whose engraved lines flash with rainbow light as you tilt it.",
+    category: "tarot",
+    tags: ["React", "Canvas", "SVG"],
+    thumbnail: "/thumbnails/grain-light-card.svg",
+    href: "/prototypes/grain-light-card",
+    featured: false,
+    status: "live",
+  },
 
   // Add your new prototype here, like this:
   // {
