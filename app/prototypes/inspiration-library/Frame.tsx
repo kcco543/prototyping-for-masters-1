@@ -22,10 +22,19 @@ type Props = {
   user?: { name: string; email: string } | null;
   /** Leave out the Sign in / Sign up links (on those pages themselves). */
   hideAuthLinks?: boolean;
+  /** Just the page's colours and fonts, without the top bar and footer: for the bookmarklet's small window. */
+  bare?: boolean;
   children: ReactNode;
 };
 
-export default function Frame({ user, hideAuthLinks = false, children }: Props) {
+export default function Frame({ user, hideAuthLinks = false, bare = false, children }: Props) {
+  if (bare) {
+    return (
+      <div className={`${styles.page} ${instrumentSans.className} ${instrumentSerif.variable}`}>
+        <main className={styles.bareMain}>{children}</main>
+      </div>
+    );
+  }
   return (
     <div className={`${styles.page} ${instrumentSans.className} ${instrumentSerif.variable}`}>
       <header className={styles.topBar}>

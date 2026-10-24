@@ -10,6 +10,9 @@
  */
 
 import { createAuthClient } from "better-auth/react";
+import { usernameClient } from "better-auth/client/plugins";
 
 // No `baseURL` needed: the auth routes live on the same website as the pages.
-export const authClient = createAuthClient();
+// usernameClient adds signIn.username(…) and lets signUp / updateUser take a
+// username (the server side is the username plugin in lib/auth.ts).
+export const authClient = createAuthClient({ plugins: [usernameClient()] });

@@ -15,6 +15,12 @@ export type BoardInput = {
 
 export type ItemInput = {
   imageUrl: string | null;
+  /**
+   * An uploaded picture's place in Supabase Storage. Here it's only checked
+   * for being there or not: whether it's in YOUR folder is checked in
+   * actions.ts, which knows who you are (isOwnImagePath in lib/storage.ts).
+   */
+  imagePath: string | null;
   linkUrl: string | null;
   title: string;
   note: string;
@@ -73,15 +79,17 @@ export function checkBoard(form: FormData): Checked<BoardInput> {
 
 export function checkItem(form: FormData): Checked<ItemInput> {
   const imageUrl = webAddress(field(form, "imageUrl"));
+  const imagePath = field(form, "imagePath") || null;
   const linkUrl = webAddress(field(form, "linkUrl"));
   const title = field(form, "title");
   const note = field(form, "note");
 
   if (imageUrl === "invalid") return { ok: false, message: "The image address should be a web address starting with https://" };
   if (linkUrl === "invalid") return { ok: false, message: "The link should be a web address starting with https://" };
-  if (!imageUrl && !linkUrl) return { ok: false, message: "Paste an image address, a link, or both." };
+  if (imagePath && imageUrl) return { ok: false, message: "Choose one picture: an uploaded one or an image address, not both." };
+  if (!imageUrl && !imagePath && !linkUrl) return { ok: false, message: "Add a picture, a link, or both." };
   if (title.length > LIMITS.itemTitle) return { ok: false, message: `Keep the title under ${LIMITS.itemTitle} characters.` };
   if (note.length > LIMITS.note) return { ok: false, message: `Keep the note under ${LIMITS.note} characters.` };
 
-  return { ok: true, value: { imageUrl, linkUrl, title, note } };
+  return { ok: true, value: { imageUrl, imagePath, linkUrl, title, note } };
 }

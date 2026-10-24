@@ -58,6 +58,35 @@ export function checkSettings(): SettingsCheck {
 }
 
 /**
+ * "Sign in with Google" is optional. It's switched on only when both of
+ * these are filled in (from Google Cloud Console, see the README):
+ *
+ *   GOOGLE_CLIENT_ID      identifies this app to Google (not secret on its own)
+ *   GOOGLE_CLIENT_SECRET  proves to Google that the request comes from this
+ *                         app's server (secret: never in the browser or git)
+ *
+ * Until then the Google button is hidden and email and password work as usual.
+ */
+export function googleSignInReady(): boolean {
+  return Boolean(process.env.GOOGLE_CLIENT_ID?.trim() && process.env.GOOGLE_CLIENT_SECRET?.trim());
+}
+
+/**
+ * Uploading images from your computer is optional too. It's switched on
+ * only when both of these are filled in (from Supabase, see the README):
+ *
+ *   SUPABASE_URL         your project's address, https://<ref>.supabase.co
+ *   SUPABASE_SECRET_KEY  lets the server use Storage without any access
+ *                        rules (secret: never in the browser or git)
+ *
+ * Until then the upload button is hidden and image addresses work as usual.
+ */
+export function uploadsReady(): boolean {
+  const url = process.env.SUPABASE_URL?.trim() ?? "";
+  return isAddress(url, ["https:", "http:"]) && Boolean(process.env.SUPABASE_SECRET_KEY?.trim());
+}
+
+/**
  * Where this copy of the app is running, so the help text points to the
  * right place. Vercel sets VERCEL=1 on every build and visit.
  */

@@ -13,21 +13,24 @@
  *   lib/session.ts   "who is visiting?" for pages and server actions
  *   lib/boards.ts    every database query for boards and items
  *   actions.ts       what the forms call to change things
- *   schema.sql       the database tables (run once in Supabase)
+ *   lib/storage.ts   uploaded pictures, in Supabase Storage
+ *   schema.sql       the database tables (made from db/migrations/)
  *
  * Setup steps are in README.md, and on the page itself until it's connected.
  */
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import BoardCard, { withPreviews, type BoardCardData } from "./BoardCard";
 import Frame from "./Frame";
-import { listBoards, type BoardSummary } from "./lib/boards";
-import { boardHref, NEW_BOARD, SIGN_IN, SIGN_UP } from "./lib/paths";
+import { listBoards } from "./lib/boards";
+import { BOOKMARKLET, NEW_BOARD, profileHref, SIGN_IN, SIGN_UP } from "./lib/paths";
 import { attempt } from "./lib/problems";
 import { getSession } from "./lib/session";
 import { checkSettings } from "./lib/settings";
 import { ProblemNotice, SetupNotice } from "./SetupNotice";
 import styles from "./styles.module.css";
+import UsernameForm from "./UsernameForm";
 
 export const metadata: Metadata = {
   title: "Inspiration library",
@@ -49,9 +52,9 @@ export default async function InspirationLibrary() {
 
   const result = await attempt(async () => {
     const session = await getSession();
-    if (!session) return { user: null, boards: [] };
+    if (!session) return { user: null, boards: [] as BoardCardData[] };
     // Only YOUR boards: the user id comes from the session.
-    return { user: session.user, boards: await listBoards(session.user.id) };
+    return { user: session.user, boards: await withPreviews(await listBoards(session.user.id)) };
   });
 
   if (!result.ok) {
@@ -63,7 +66,11 @@ export default async function InspirationLibrary() {
   }
 
   const { user, boards } = result.value;
-  return <Frame user={user}>{user ? <YourBoards name={user.name} boards={boards} /> : <Landing />}</Frame>;
+  return (
+    <Frame user={user}>
+      {user ? <YourBoards name={user.name} username={user.username ?? null} displayUsername={user.displayUsername ?? null} boards={boards} /> : <Landing />}
+    </Frame>
+  );
 }
 
 /* ---------- Signed out: the landing page ---------- */
@@ -130,7 +137,15 @@ function Landing() {
 
 /* ---------- Signed in: your boards ---------- */
 
-function YourBoards({ name, boards }: { name: string; boards: BoardSummary[] }) {
+type YourBoardsProps = {
+  name: string;
+  username: string | null;
+  displayUsername: string | null;
+  boards: BoardCardData[];
+};
+
+function YourBoards({ name, username, displayUsername, boards }: YourBoardsProps) {
+  const publicCount = boards.filter((board) => board.isPublic).length;
   return (
     <section aria-labelledby="boards-title">
       <div className={styles.sectionHead}>
@@ -143,6 +158,34 @@ function YourBoards({ name, boards }: { name: string; boards: BoardSummary[] }) 
         <Link href={NEW_BOARD} className={styles.button}>
           + New board
         </Link>
+      </div>
+
+      {/* Your public profile: its link, or a prompt to choose a username first. */}
+      <div className={styles.profilePanel}>
+        {username ? (
+          <p className={styles.profileLine}>
+            Your public profile:{" "}
+            <Link className={styles.textLink} href={profileHref(username)}>
+              @{displayUsername ?? username}
+            </Link>{" "}
+            <span className={styles.profileNote}>
+              shows your {publicCount} public {publicCount === 1 ? "board" : "boards"}, never your private ones.
+            </span>
+          </p>
+        ) : (
+          <p className={styles.profileLine}>Choose a username to get a public profile page that lists your public boards.</p>
+        )}
+        <p className={styles.profileNote}>
+          Save pages from any website with the{" "}
+          <Link className={styles.textLink} href={BOOKMARKLET}>
+            bookmarklet
+          </Link>
+          .
+        </p>
+        <details className={styles.profileEdit} open={!username}>
+          <summary className={styles.profileEditSummary}>{username ? "Change username" : "Username"}</summary>
+          <UsernameForm current={username} />
+        </details>
       </div>
 
       {boards.length === 0 ? (
@@ -163,27 +206,5 @@ function YourBoards({ name, boards }: { name: string; boards: BoardSummary[] }) 
         </ul>
       )}
     </section>
-  );
-}
-
-function BoardCard({ board }: { board: BoardSummary }) {
-  return (
-    <Link href={boardHref(board.id)} className={styles.boardCard}>
-      <div className={`${styles.boardPreview} ${styles[`preview${Math.min(board.previews.length, 4)}`]}`}>
-        {board.previews.map((src, index) => (
-          // Plain <img>: the pictures come from all over the web, so Next.js's
-          // <Image> (which needs every website listed in next.config.ts) doesn't fit.
-          <img key={`${src}-${index}`} className={styles.boardPreviewImage} src={src} alt="" loading="lazy" referrerPolicy="no-referrer" />
-        ))}
-        {board.previews.length === 0 && <span className={styles.boardPreviewEmpty}>{board.itemCount > 0 ? "Links only" : "Empty"}</span>}
-      </div>
-      <div className={styles.boardCardBody}>
-        <h2 className={styles.boardCardTitle}>{board.title}</h2>
-        <p className={styles.boardCardMeta}>
-          {board.itemCount} {board.itemCount === 1 ? "item" : "items"}
-          <span className={board.isPublic ? styles.badgePublic : styles.badgePrivate}>{board.isPublic ? "Public" : "Private"}</span>
-        </p>
-      </div>
-    </Link>
   );
 }

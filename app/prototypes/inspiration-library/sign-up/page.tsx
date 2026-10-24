@@ -10,7 +10,7 @@ import Frame from "../Frame";
 import { safeNext } from "../lib/paths";
 import { attempt } from "../lib/problems";
 import { getSession } from "../lib/session";
-import { checkSettings } from "../lib/settings";
+import { checkSettings, googleSignInReady } from "../lib/settings";
 import { ProblemNotice, SetupNotice } from "../SetupNotice";
 import styles from "../styles.module.css";
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: "Sign up · Inspiration library" };
 
 export const dynamic = "force-dynamic";
 
-type Props = { searchParams: Promise<{ next?: string | string[] }> };
+type Props = { searchParams: Promise<{ next?: string | string[]; error?: string | string[] }> };
 
 export default async function SignUpPage({ searchParams }: Props) {
   const settings = checkSettings();
@@ -30,7 +30,7 @@ export default async function SignUpPage({ searchParams }: Props) {
     );
   }
 
-  const { next } = await searchParams;
+  const { next, error } = await searchParams;
   const goTo = safeNext(typeof next === "string" ? next : null);
 
   const result = await attempt(getSession);
@@ -51,7 +51,13 @@ export default async function SignUpPage({ searchParams }: Props) {
           Create an account
         </h1>
         <p className={styles.authText}>Your boards are private unless you make one public.</p>
-        <AuthForm mode="sign-up" next={goTo} />
+        <AuthForm
+          mode="sign-up"
+          next={goTo}
+          google={googleSignInReady()}
+          // Set by Better Auth when a Google sign-in comes back with a problem.
+          googleError={typeof error === "string" ? error : undefined}
+        />
       </section>
     </Frame>
   );

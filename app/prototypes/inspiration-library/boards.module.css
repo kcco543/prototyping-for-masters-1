@@ -290,3 +290,126 @@
     transition: none;
   }
 }
+
+/* ---------- Newest first / By colour ---------- */
+
+.viewSwitch {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 1.1rem;
+  padding: 0.25rem;
+  background: rgba(31, 28, 24, 0.06);
+  border-radius: 999px;
+}
+
+.viewOption,
+.viewOptionActive {
+  padding: 0.4rem 0.95rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.viewOption {
+  color: var(--muted);
+}
+
+.viewOption:hover {
+  color: var(--ink);
+}
+
+.viewOptionActive {
+  color: var(--ink);
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(31, 28, 24, 0.12);
+}
+
+.viewOption:focus-visible,
+.viewOptionActive:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The board's palette, as one blended strip */
+.gradientBar {
+  height: 28px;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(31, 28, 24, 0.08);
+}
+
+/* Square tiles in rows, left to right, so the order reads as a gradient
+   (the masonry columns would read top to bottom instead). */
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.colorTile {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: 6px;
+}
+
+.colorTileLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.colorTileLink:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.itemImageFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.colorTileText {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* The hex code, shown when you point at (or tab to) a tile */
+.colorTileHex {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 0.1rem 0.35rem;
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.colorTileLink:hover .colorTileHex,
+.colorTileLink:focus-visible .colorTileHex {
+  opacity: 1;
+}
+
+.colorNote {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}

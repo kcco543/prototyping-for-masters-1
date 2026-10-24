@@ -24,3 +24,11 @@ export function safeNext(next: string | null | undefined): string {
   const isSneaky = next.includes("//") || next.includes("\\");
   return isOurs && !isSneaky ? next : HOME;
 }
+
+/** A person's public profile: their public boards. Usernames are already safe in an address (lib/auth.ts). */
+export const profileHref = (username: string) => `${HOME}/u/${username}`;
+
+/** The small "save to a board" window the bookmarklet opens (save/page.tsx). */
+export const SAVE = `${HOME}/save`;
+/** Where to get the bookmarklet (bookmarklet/page.tsx). */
+export const BOOKMARKLET = `${HOME}/bookmarklet`;
